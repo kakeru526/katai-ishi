@@ -1,0 +1,2437 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>硬い石（意志）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#4E1826;
+  --ink:#2B1A1F;
+  --paper:#FFF6E6;
+  --ochre:#E9B24C;
+  --teal:#2E9C94;
+  --rose:#E0786F;
+  --muted:#7A5A60;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#2A0C15; }
+}
+:root[data-theme="dark"]{ --bg:#2A0C15; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+html,body{ height:100%; margin:0; }
+*,*::before,*::after{ box-sizing:inherit; }
+body{
+  background:var(--bg);
+  color:var(--paper);
+  font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  overflow:hidden;
+  touch-action:none;
+  overscroll-behavior:none;
+  -webkit-user-select:none; user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#wrap{ position:relative; height:100%; width:100%; display:flex; align-items:center; justify-content:center; }
+#stage{ position:relative; overflow:hidden; }
+#cv{ display:block; width:100%; height:100%; touch-action:none; }
+
+.ov{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:1.2em; text-align:center;
+}
+.ov[hidden]{ display:none; }
+.ov.dim{ background:rgba(43,12,21,.78); }
+
+.title{ background:linear-gradient(180deg, rgba(43,12,21,.25) 0%, rgba(43,12,21,.82) 55%, rgba(43,12,21,.92) 100%); justify-content:flex-end; padding-bottom:1.6em; }
+.logo{ margin:0 0 .3em; line-height:1; }
+.logo .pun{ display:block; margin-top:.35em; font-family:"Dela Gothic One","Hiragino Sans",sans-serif; font-size:1.5em; color:var(--ochre); -webkit-text-stroke:.05em var(--ink); paint-order:stroke fill; }
+.logo .kana{ display:block; font-size:.8em; letter-spacing:.5em; margin-bottom:.5em; color:var(--ochre); font-weight:800; }
+.logo h1{
+  margin:0; font-family:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif; font-weight:400;
+  font-size:3.9em; line-height:.98; color:var(--paper);
+  -webkit-text-stroke:.07em var(--ink); paint-order:stroke fill;
+  text-shadow:0 .08em 0 var(--ink);
+}
+.tag{ margin:.45em 0 .5em; font-weight:800; font-size:1.02em; }
+.modes{ display:flex; margin:.2em 0 .5em; border:.14em solid var(--ink); border-radius:999px; overflow:hidden; background:var(--paper); box-shadow:0 .2em 0 var(--ink); }
+.mode{ font:400 .92em "Dela Gothic One","Hiragino Sans",sans-serif; color:var(--ink); background:transparent; border:none; padding:.5em 1em; cursor:pointer; touch-action:manipulation; }
+.mode + .mode{ border-left:.12em solid var(--ink); }
+.mode[aria-checked="true"][data-mode="easy"]{ background:#7ED6A5; }
+.mode[aria-checked="true"][data-mode="normal"]{ background:var(--ochre); }
+.mode[aria-checked="true"][data-mode="hard"]{ background:#FF4D6D; color:var(--paper); }
+.mode:focus-visible{ outline:.18em solid var(--teal); outline-offset:-.3em; }
+#preview{ width:12.5em; height:4.25em; display:block; margin:0 auto; }
+.mdesc{ margin:.1em 0 .45em; font-size:.8em; line-height:1.45; min-height:2.9em; }
+.mdesc b{ display:block; font-size:1.05em; }
+.how{
+  list-style:none; margin:.8em 0 0; padding:.8em 1em; text-align:left;
+  background:rgba(255,246,230,.1); border-radius:.8em; font-size:.8em; line-height:1.6; max-width:21em;
+}
+.how li{ padding-left:1.1em; position:relative; }
+.how li::before{ content:""; position:absolute; left:0; top:.55em; width:.55em; height:.55em; border-radius:50%; background:var(--ochre); }
+.best{ margin:.7em 0 0; font-size:.8em; color:#F3D9C2; min-height:1.2em; }
+.note{ margin:.5em 0 0; font-size:.68em; color:#C9A3AA; }
+
+.btn{
+  font:800 1em "M PLUS Rounded 1c","Hiragino Maru Gothic ProN",sans-serif;
+  color:var(--ink); background:var(--paper);
+  border:.14em solid var(--ink); border-radius:999px;
+  padding:.62em 1.4em; box-shadow:0 .24em 0 var(--ink);
+  cursor:pointer; touch-action:manipulation;
+}
+.btn:active{ transform:translateY(.18em); box-shadow:0 .06em 0 var(--ink); }
+.btn:focus-visible{ outline:.18em solid var(--teal); outline-offset:.18em; }
+.btn.primary{ background:var(--ochre); }
+.btn.big{ font-size:1.2em; padding:.7em 1.8em; }
+
+.card{
+  background:var(--paper); color:var(--ink);
+  border:.14em solid var(--ink); border-radius:1.1em;
+  box-shadow:0 .35em 0 var(--ink);
+  padding:1.2em 1.2em 1.3em; width:88%; max-width:20em;
+}
+.card h2{ margin:.1em 0 .25em; font-family:"Dela Gothic One","Hiragino Sans",sans-serif; font-weight:400; font-size:1.75em; line-height:1.1; }
+.card .kind{ margin:0; font-size:.75em; font-weight:800; color:var(--teal); }
+.card .kind.fail{ color:#C0394F; }
+.card .sub{ margin:0 0 .7em; font-size:.82em; color:var(--muted); line-height:1.5; }
+.host{
+  margin:0 0 .8em; padding:.55em .8em; background:#F6E3CC; border-radius:.7em;
+  font-size:.86em; font-weight:800; text-align:left; line-height:1.45;
+}
+.host small{ display:block; font-weight:500; font-size:.78em; color:var(--muted); margin-bottom:.1em; }
+table.rows{ width:100%; border-collapse:collapse; font-size:.8em; margin:0 0 .6em; }
+table.rows td{ padding:.28em 0; border-bottom:.08em dashed #D8BFA6; }
+table.rows td:last-child{ text-align:right; font-weight:800; font-variant-numeric:tabular-nums; }
+.score{ margin:.2em 0 0; font-family:"Dela Gothic One","Hiragino Sans",sans-serif; font-size:2.3em; line-height:1; }
+.score small{ font-size:.4em; margin-left:.2em; }
+.card .best{ color:var(--muted); margin:.35em 0 .9em; }
+.btns{ display:flex; gap:.7em; justify-content:center; flex-wrap:wrap; }
+.btns.col{ flex-direction:column; align-items:stretch; }
+.linkbtn{ margin-top:.9em; background:none; border:none; font:800 .78em "M PLUS Rounded 1c",sans-serif; color:var(--teal); text-decoration:underline; cursor:pointer; padding:.3em; }
+.toggles{ display:flex; gap:1.4em; justify-content:center; margin-top:1em; font-size:.85em; font-weight:800; }
+.toggles input{ width:1.1em; height:1.1em; vertical-align:-.15em; accent-color:var(--teal); }
+
+.hcard{
+  background:var(--paper); color:var(--ink);
+  border:.14em solid var(--ink); border-radius:1.1em; box-shadow:0 .35em 0 var(--ink);
+  width:94%; height:94%; display:flex; flex-direction:column; text-align:left; overflow:hidden;
+}
+.hhead{ display:flex; align-items:center; gap:.6em; padding:.55em .8em .45em; border-bottom:.1em dashed #D8BFA6; font-weight:800; font-size:.8em; }
+.hhead #hNum{ color:var(--teal); font-variant-numeric:tabular-nums; }
+.hlabel{ flex:1; color:var(--muted); }
+.hx{ font:800 1.5em/1 "M PLUS Rounded 1c",sans-serif; background:none; border:none; color:var(--ink); cursor:pointer; padding:0 .2em; }
+.hx:focus-visible{ outline:.15em solid var(--teal); border-radius:.3em; }
+.hbody{ flex:1; overflow-y:auto; padding:.4em 1em .6em; -webkit-overflow-scrolling:touch; touch-action:pan-y; }
+.hpage[hidden]{ display:none; }
+.hpage h2{ margin:.25em 0 .45em; font-family:"Dela Gothic One","Hiragino Sans",sans-serif; font-weight:400; font-size:1.45em; line-height:1.15; }
+.hpage p{ margin:.55em 0; font-size:.82em; line-height:1.6; }
+.hpage ul{ margin:.5em 0; padding-left:1.1em; font-size:.8em; line-height:1.55; }
+.hpage li{ margin:.25em 0; }
+.hpage b{ font-weight:800; }
+.hcv{ display:block; width:100%; height:auto; border-radius:.7em; background:#4E1826; }
+.hgrid{ display:grid; gap:.55em; margin:.4em 0; }
+.hgrid.two{ grid-template-columns:1fr 1fr; }
+.hgrid.three{ grid-template-columns:1fr 1fr 1fr; }
+.hgrid figure{ margin:0; }
+.hgrid figcaption{ font-size:.68em; line-height:1.4; margin-top:.3em; }
+.hgrid figcaption b{ display:block; font-size:1.12em; }
+.hnav{ display:flex; align-items:center; justify-content:space-between; gap:.5em; padding:.6em .8em .8em; border-top:.1em dashed #D8BFA6; }
+.hnav .btn{ font-size:.85em; padding:.5em 1em; }
+.hnav .btn:disabled{ opacity:.35; pointer-events:none; }
+.dots{ display:flex; gap:.35em; }
+.dots i{ width:.45em; height:.45em; border-radius:50%; background:#D8BFA6; display:block; }
+.dots i.on{ background:var(--teal); }
+.btns.sub{ margin-top:.6em; }
+.btns.sub .btn{ font-size:.85em; padding:.5em 1.1em; }
+.rkline{ margin:-.4em 0 .9em; font-size:.8em; font-weight:800; color:var(--teal); min-height:1em; }
+.rankcard{ max-height:92%; display:flex; flex-direction:column; text-align:left; }
+.rkhead{ display:flex; align-items:center; justify-content:space-between; }
+.rkhead h2{ margin:0; }
+.rkmodes{ align-self:center; margin:.6em 0 .4em; }
+.rkmsg{ margin:.3em 0; font-size:.75em; color:var(--muted); line-height:1.5; min-height:1.2em; }
+.rklist{ list-style:none; margin:0; padding:0; overflow-y:auto; flex:1; min-height:6em; touch-action:pan-y; }
+.rklist li{ display:grid; grid-template-columns:1.8em 1.7em 1fr auto; align-items:center; gap:.5em; padding:.42em .35em; border-bottom:.08em dashed #D8BFA6; font-size:.85em; }
+.rklist li.me{ background:#F6E3CC; border-radius:.5em; }
+.rklist .no{ font-family:"Dela Gothic One","Hiragino Sans",sans-serif; text-align:center; }
+.rklist li:nth-child(1) .no{ color:#C8901C; }
+.rklist li:nth-child(2) .no{ color:#8A8F99; }
+.rklist li:nth-child(3) .no{ color:#A9643A; }
+.rklist img{ width:1.7em; height:1.7em; border-radius:50%; display:block; object-fit:cover; }
+.rklist .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:800; }
+.rklist .sc{ font-variant-numeric:tabular-nums; font-weight:800; }
+.tvlist{ overflow-y:auto; flex:1; touch-action:pan-y; padding-right:.2em; }
+.tvlist h3{ margin:.8em 0 .3em; font-size:.8em; color:var(--teal); font-weight:800; }
+.tvitem{ padding:.5em .6em; margin:.35em 0; border-radius:.6em; background:#F6E3CC; font-size:.78em; line-height:1.55; }
+.tvitem b{ display:block; font-size:1.05em; margin-bottom:.1em; }
+.tvitem.locked{ background:transparent; border:.1em dashed #D8BFA6; color:var(--muted); }
+@media (prefers-reduced-motion: reduce){ .btn:active{ transform:none; } }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="cv" aria-label="ゲーム画面"></canvas>
+
+    <div id="title" class="ov title">
+      <div class="logo"><span class="kana">かたいいし</span><h1>硬い石</h1><span class="pun">（意志）</span></div>
+      <p class="tag">砕かれてたまるか。自力で出たる。</p>
+      <canvas id="preview" aria-hidden="true"></canvas>
+      <p class="mdesc" id="mdesc"></p>
+      <div class="modes" role="radiogroup" aria-label="難易度">
+        <button class="mode" data-mode="easy" role="radio" aria-checked="false">EASY</button>
+        <button class="mode" data-mode="normal" role="radio" aria-checked="true">NORMAL</button>
+        <button class="mode" data-mode="hard" role="radio" aria-checked="false">HARD</button>
+      </div>
+      <div class="btns">
+        <button id="bStart" class="btn primary big">排石をはじめる</button>
+      </div>
+      <div class="btns sub">
+        <button id="bHow" class="btn">遊び方</button>
+        <button id="bRankT" class="btn" hidden>社内ランキング</button>
+        <button id="bTrivia" class="btn">豆知識</button>
+      </div>
+      <p class="best" id="tBest"></p>
+      <p class="note">試作版です。本物の結石の痛みはお医者さんへ。</p>
+    </div>
+
+    <div id="howto" class="ov dim" hidden>
+      <div class="hcard" role="dialog" aria-modal="true" aria-labelledby="hTitle">
+        <div class="hhead"><span id="hNum">1 / 8</span><span class="hlabel">遊び方</span><button id="hClose" class="hx" aria-label="閉じる">×</button></div>
+        <div class="hbody">
+
+          <section class="hpage">
+            <h2 id="hTitle">きみは結石だ</h2>
+            <canvas class="hcv" data-scene="goal" data-lw="300" data-lh="160" style="aspect-ratio:300/160"></canvas>
+            <p>おっさんの腎臓で生まれた結石のきみ。病院に見つかって砕かれる前に、尿の流れに乗って<b>体の外（外尿道口）</b>まで自力で脱出しよう。</p>
+            <p>ただし、ぶつかるたびにおっさんが痛がる。痛がらせすぎると救急車を呼ばれてしまう。</p>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>操作はふたつだけ</h2>
+            <canvas class="hcv" data-scene="control" data-lw="300" data-lh="200" style="aspect-ratio:300/200"></canvas>
+            <ul>
+              <li><b>左右にドラッグ</b>：指を動かした分だけ結石が動く。画面のどこを触ってもOK</li>
+              <li><b>「踏ん張る」を長押し</b>：流れがゆっくりになる。まわりのゲージがなくなるまで使える</li>
+              <li>パソコンは ← → キーで移動、スペースキーで踏ん張る</li>
+            </ul>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>おっさんの痛み</h2>
+            <canvas class="hcv" data-scene="pain" data-lw="300" data-lh="150" style="aspect-ratio:300/150"></canvas>
+            <p>壁や敵に当たると痛みが増える。何にも当たらずに進むと少しずつ引く。</p>
+            <p>30%・60%・90%を越えるたびに、おっさんが病院を頼って医療チームが本気を出す。<b>100%で救急搬送＝ゲームオーバー</b>。</p>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>医療チーム</h2>
+            <div class="hgrid two">
+              <figure><canvas class="hcv" data-scene="shock" data-lw="160" data-lh="110" style="aspect-ratio:160/110"></canvas><figcaption><b>衝撃波</b>照準が縮みきるとドーン。横に逃げるか、踏ん張って待つ</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="scope" data-lw="160" data-lh="110" style="aspect-ratio:160/110"></canvas><figcaption><b>内視鏡</b>「ドツいたろか」の後に下から突進。横にずれる</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="laser" data-lw="160" data-lh="110" style="aspect-ratio:160/110"></canvas><figcaption><b>レーザー</b>赤い帯が予告。帯の外へ逃げる。当たると石が削れる</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="net" data-lw="160" data-lh="110" style="aspect-ratio:160/110"></canvas><figcaption><b>網</b>閉じる瞬間に中にいたら即アウト！</figcaption></figure>
+            </div>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>ボス：主治医スコープ</h2>
+            <canvas class="hcv" data-scene="boss" data-lw="300" data-lh="190" style="aspect-ratio:300/190"></canvas>
+            <p>膀胱に着くと、額帯鏡をつけた巨大な内視鏡「主治医」が現れる。<b>尿意ゲージが溜まりきるまで耐え抜け</b>ば撃退。</p>
+            <ul>
+              <li><b>一斉照射</b>：赤い帯が何本も出る。帯のない列へ逃げる</li>
+              <li><b>網の連打</b>：きみの位置めがけて網が3連続。動き続けるか踏ん張る</li>
+              <li><b>往生せえ突進</b>：「！」の後にまっすぐ突っ込んでくる。横にずれる</li>
+              <li>ノーダメージで撃退するとボーナスが倍</li>
+            </ul>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>雑魚敵</h2>
+            <p>尿の中にいてもおかしくない連中。よければ何もしてこない。</p>
+            <div class="hgrid three">
+              <figure><canvas class="hcv" data-scene="crystal" data-lw="100" data-lh="90" style="aspect-ratio:100/90"></canvas><figcaption><b>結晶</b>その場で回る。トゲが痛い</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="bacteria" data-lw="100" data-lh="90" style="aspect-ratio:100/90"></canvas><figcaption><b>大腸菌</b>左右にうろうろ</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="wbc" data-lw="100" data-lh="90" style="aspect-ratio:100/90"></canvas><figcaption><b>白血球</b>寄ってくる。石も削れる</figcaption></figure>
+            </div>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>アイテムと仕掛け</h2>
+            <div class="hgrid two">
+              <figure><canvas class="hcv" data-scene="water" data-lw="140" data-lh="70" style="aspect-ratio:140/70"></canvas><figcaption><b>水分補給</b>3秒間加速する</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="pill" data-lw="140" data-lh="70" style="aspect-ratio:140/70"></canvas><figcaption><b>鎮痛剤</b>おっさんの痛みが下がる</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="relax" data-lw="140" data-lh="70" style="aspect-ratio:140/70"></canvas><figcaption><b>リラックス</b>管が広がる</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="buddy" data-lw="140" data-lh="70" style="aspect-ratio:140/70"></canvas><figcaption><b>仲間の石</b>ちっちゃい石と合体して育つ。削れた分が戻る</figcaption></figure>
+            </div>
+            <ul>
+              <li><b>蠕動の波</b>（尿管）：乗ると加速。その間は管が少し締まる</li>
+              <li><b>動脈の拍動</b>（総腸骨動脈交差部）：鼓動に合わせて管がドクン。真ん中が安全</li>
+              <li><b>括約筋</b>（膜様部尿道）：閉じている間は通れない。踏ん張って開くのを待つ</li>
+            </ul>
+          </section>
+
+          <section class="hpage" hidden>
+            <h2>ゲームオーバーとコツ</h2>
+            <div class="hgrid three">
+              <figure><canvas class="hcv" data-scene="endPain" data-lw="100" data-lh="80" style="aspect-ratio:100/80"></canvas><figcaption><b>救急搬送</b>痛みが100%</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="endCrush" data-lw="100" data-lh="80" style="aspect-ratio:100/80"></canvas><figcaption><b>粉砕</b>石が削れきった</figcaption></figure>
+              <figure><canvas class="hcv" data-scene="endNet" data-lw="100" data-lh="80" style="aspect-ratio:100/80"></canvas><figcaption><b>回収</b>網に捕まった</figcaption></figure>
+            </div>
+            <ul>
+              <li>基本は管の真ん中。カーブは早めに寄せる</li>
+              <li>連続でぶつかるのがいちばん危ない。痛みは何にも当たらない時間が続かないと引かない</li>
+              <li>横に逃げられないときは、迷わず踏ん張る</li>
+              <li>初めてならEASYで一度ゴールを見てみよう</li>
+            </ul>
+          </section>
+
+        </div>
+        <div class="hnav">
+          <button id="hPrev" class="btn">もどる</button>
+          <div class="dots" id="hDots" aria-hidden="true"></div>
+          <button id="hNext" class="btn primary">つぎへ</button>
+        </div>
+      </div>
+    </div>
+    <div id="rankov" class="ov dim" hidden>
+      <div class="card rankcard" role="dialog" aria-modal="true" aria-labelledby="rkTitle">
+        <div class="rkhead"><h2 id="rkTitle">社内ランキング</h2><button id="rkClose" class="hx" aria-label="閉じる">×</button></div>
+        <div class="modes rkmodes" role="tablist" aria-label="難易度">
+          <button class="mode" data-rk="easy" role="tab" aria-checked="false">EASY</button>
+          <button class="mode" data-rk="normal" role="tab" aria-checked="true">NORMAL</button>
+          <button class="mode" data-rk="hard" role="tab" aria-checked="false">HARD</button>
+        </div>
+        <p class="rkmsg" id="rkMsg">読み込み中…</p>
+        <ol class="rklist" id="rkList"></ol>
+      </div>
+    </div>
+
+    <div id="triviaov" class="ov dim" hidden>
+      <div class="card rankcard" role="dialog" aria-modal="true" aria-labelledby="tvTitle">
+        <div class="rkhead"><h2 id="tvTitle">豆知識図鑑</h2><button id="tvClose" class="hx" aria-label="閉じる">×</button></div>
+        <p class="rkmsg" id="tvMsg"></p>
+        <div class="tvlist" id="tvList"></div>
+      </div>
+    </div>
+
+    <div id="pause" class="ov dim" hidden>
+      <div class="card">
+        <h2>一時停止</h2>
+        <div class="btns col" style="margin-top:.8em">
+          <button id="bResume" class="btn primary">つづける</button>
+          <button id="bRestart" class="btn">最初からやり直す</button>
+          <button id="bToTitle" class="btn">タイトルへ</button>
+        </div>
+        <div class="toggles">
+          <label><input type="checkbox" id="optSound"> 効果音</label>
+          <label><input type="checkbox" id="optVib"> 振動</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="result" class="ov dim" hidden>
+      <div class="card">
+        <p class="kind" id="rKind"></p>
+        <h2 id="rTitle"></h2>
+        <p class="sub" id="rSub"></p>
+        <p class="host"><small>宿主のひとこと</small><span id="rHost"></span></p>
+        <table class="rows"><tbody id="rRows"></tbody></table>
+        <p class="score"><span id="rScore">0</span><small>点</small></p>
+        <p class="best" id="rBest"></p>
+        <p class="rkline" id="rRank"></p>
+        <p class="rkline" id="rTrivia"></p>
+        <div class="btns">
+          <button id="bRetry" class="btn primary">もう一回</button>
+          <button id="bTitle2" class="btn">タイトルへ</button>
+        </div>
+        <button id="bCopy" class="linkbtn">結果をコピーして自慢する</button>
+        <button id="bRankR" class="linkbtn" hidden>社内ランキングを見る</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- 基本設定 ---------- */
+const W = 360, H = 640, SY = 210;
+const cv = document.getElementById('cv');
+let ctx = cv.getContext('2d');
+const pcv = document.getElementById('preview'), pctx = pcv.getContext('2d');
+
+/* ---------- 難易度 ---------- */
+const MODES = {
+  easy:   { label: 'EASY',   stone: 'まるい石', host: 'のんきなおじさん', desc: '石が削れにくい。敵もゆるめ（スコア×0.5）',
+            painMul: 1.3,  decay: 2.2, decayDelay: 2.2,   pill: 18, grow: 3,   item: [5, 2], dmgMul: 0.5,  laserW: 2,  beamW: 7,  laserCd: [3.2, 2.4], shockMul: 1.3,  basketMul: 1.3, lungeMul: 1.4, scoreMul: 0.5,
+            ouch: ['おっ', 'いてて', 'あいたた', 'ん？', 'おおぅ'], ouchMax: ['さすがに痛いわ', 'あかん、横になろ', 'ちょっと病院…'] },
+  normal: { label: 'NORMAL', stone: 'ふつうの石', host: 'ふつうのおじさん', desc: '標準の難しさ（スコア×1.0）',
+            painMul: 1.25, decay: 2.5, decayDelay: 2.5, pill: 14, grow: 2,   item: [7, 3], dmgMul: 0.75,    laserW: 4,  beamW: 10, laserCd: [2.6, 1.6], shockMul: 1,    basketMul: 1,   lungeMul: 1,   scoreMul: 1,
+            ouch: ['いてっ', 'うっ…', 'ぐはっ', 'あ゛っ', 'ちょ、待って', 'ひぃっ'], ouchMax: ['無理無理無理', '救急車…', 'あかんて…', 'もう限界…'] },
+  hard:   { label: 'HARD',   stone: 'トゲトゲのロック野郎', host: '繊細なおじさん', desc: '痛みが引かない体質。レーザー極太（スコア×2.0）',
+            painMul: 1.2,  decay: 2,   decayDelay: 2.5,   pill: 8,  grow: 1.5, item: [9, 3], dmgMul: 1.35, laserW: 12, beamW: 24, laserCd: [2.0, 1.3], shockMul: 0.75, basketMul: 0.8, lungeMul: 0.7, scoreMul: 2,
+            ouch: ['ひっ…', '痛っ…無理…', 'ちょ、ちょっと…', 'うぅ…', '泣きそう', 'やめて…'], ouchMax: ['お母さん…', 'もうダメ…', '遺書書かな…', '意識が…'] }
+};
+let MODE = 'normal';
+try{ const m = JSON.parse(localStorage.getItem('haiseki:mode')); if(MODES[m]) MODE = m; }catch(e){}
+let M = MODES[MODE];
+const stageEl = document.getElementById('stage'), wrap = document.getElementById('wrap');
+let scale = 1;
+
+function resize(){
+  const aw = wrap.clientWidth, ah = wrap.clientHeight;
+  scale = Math.min(aw / W, ah / H);
+  const cw = Math.floor(W * scale), ch = Math.floor(H * scale);
+  stageEl.style.width = cw + 'px';
+  stageEl.style.height = ch + 'px';
+  stageEl.style.fontSize = (16 * scale) + 'px';
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(cw * dpr);
+  cv.height = Math.round(ch * dpr);
+  const pr = pcv.getBoundingClientRect();
+  pcv.width = Math.max(1, Math.round((pr.width || 200) * dpr));
+  pcv.height = Math.max(1, Math.round((pr.height || 68) * dpr));
+}
+window.addEventListener('resize', resize);
+resize();
+
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('haiseki:' + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('haiseki:' + k, JSON.stringify(v)); }catch(e){} }
+};
+const settings = { sound: store.get('sound', true), vib: store.get('vib', true) };
+
+/* ---------- 音 ---------- */
+let AC = null;
+function ac(){
+  if(!settings.sound) return null;
+  if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = null; } }
+  if(AC && AC.state === 'suspended'){ AC.resume(); }
+  return AC;
+}
+function tone(f1, f2, dur, type, vol){
+  const a = ac(); if(!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(f1, t);
+  if(f2) o.frequency.exponentialRampToValueAtTime(Math.max(20, f2), t + dur);
+  g.gain.setValueAtTime(vol || 0.1, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(a.destination);
+  o.start(t); o.stop(t + dur + 0.03);
+}
+function noise(dur, vol){
+  const a = ac(); if(!a) return;
+  const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+  for(let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+  const s = a.createBufferSource(); s.buffer = buf;
+  const f = a.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 700;
+  const g = a.createGain(); g.gain.value = vol || 0.3;
+  s.connect(f).connect(g).connect(a.destination); s.start();
+}
+const sfx = {
+  hit(){ tone(190, 70, 0.18, 'square', 0.08); },
+  tell(){ tone(900, 900, 0.07, 'square', 0.035); },
+  laser(){ tone(1500, 280, 0.32, 'sawtooth', 0.055); },
+  boom(){ noise(0.5, 0.45); tone(90, 40, 0.4, 'sine', 0.2); },
+  pick(){ tone(660, 1320, 0.16, 'sine', 0.12); },
+  snap(){ tone(320, 1300, 0.08, 'square', 0.06); },
+  win(){ [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, f, 0.2, 'triangle', 0.12), i * 110)); },
+  lose(){ [392, 330, 247].forEach((f, i) => setTimeout(() => tone(f, f * 0.96, 0.28, 'triangle', 0.12), i * 170)); }
+};
+function buzz(ms){ if(settings.vib && navigator.vibrate){ try{ navigator.vibrate(ms); }catch(e){} } }
+
+/* ---------- コース（腎杯 → 外尿道口） ---------- */
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+const gauss = (x, s) => Math.exp(-(x * x) / (s * s));
+
+const SECTIONS = [
+  { id: 'calyx', name: '腎杯', sub: '石が生まれた場所。ここから長い旅が始まる', len: 1200, speed: 108,
+    prof: (e, d) => [180 + 22 * Math.sin(d / 300), e < 0 ? 62 * Math.sqrt(Math.max(0, 1 - Math.pow(e / 70, 2))) : lerp(62, 112, sstep(e / 260)) + 12 * Math.sin(d / 130)] },
+  { id: 'pelvis', name: '腎盂', sub: '尿が集まる漏斗。この先で一気に細くなる', len: 1100, speed: 112,
+    prof: (e, d) => [180 + 18 * Math.sin(d / 250), lerp(125, 72, sstep(e / 1100)) + 6 * Math.sin(d / 110)] },
+  { id: 'upj', name: '腎盂尿管移行部', tag: '第1狭窄部', sub: '腎盂と尿管のつなぎ目。石が詰まりやすい', len: 700, speed: 105,
+    prof: (e, d) => [180 + 14 * Math.sin(d / 200), 70 - 24 * gauss(e - 350, 160)] },
+  { id: 'upper', name: '上部尿管', sub: '蠕動の波に乗って下へ', len: 2000, speed: 118, ureter: true,
+    prof: (e, d) => [180 + 46 * Math.sin(d / 260) + 18 * Math.sin(d / 97 + 1.3), 60 + 8 * Math.sin(d / 180 + 0.5)] },
+  { id: 'iliac', name: '総腸骨動脈交差部', tag: '第2狭窄部', sub: '動脈の拍動で管が締め付けられる。真ん中を通れ', len: 950, speed: 110, ureter: true,
+    prof: (e, d) => [180 + 22 * Math.sin(d / 240), 60 + 5 * Math.sin(d / 150)] },
+  { id: 'lower', name: '下部尿管', sub: '骨盤の中を通る、カーブの多い区間', len: 2000, speed: 124, ureter: true,
+    prof: (e, d) => [180 + 52 * Math.sin(d / 220) + 16 * Math.sin(d / 80 + 0.7), 60 + 7 * Math.sin(d / 170)] },
+  { id: 'uvj', name: '尿管膀胱移行部', tag: '第3狭窄部', sub: '尿管でいちばん狭い。膀胱の壁を斜めに貫く', len: 850, speed: 105, ureter: true,
+    prof: (e, d) => [180 + 24 * Math.sin(d / 210), 62 - 18 * gauss(e - 425, 190)] },
+  { id: 'bladder', name: '膀胱', sub: '広い空間。ボスの気配がする…', len: 1900, speed: 86,
+    prof: (e, d) => [180 + 14 * Math.sin(d / 210), 148 + 8 * Math.sin(d / 160)] },
+  { id: 'prost', name: '前立腺部尿道', sub: '内尿道口を抜けて尿道へ。排尿開始！', len: 1100, speed: 145,
+    prof: (e, d) => [180 + 28 * Math.sin(d / 300) + 12 * Math.sin(d / 120), 58 + 6 * Math.sin(d / 150)] },
+  { id: 'memb', name: '膜様部尿道', sub: '尿道括約筋が開閉する。閉じている間は通れない', len: 780, speed: 132,
+    prof: (e, d) => [180 + 10 * Math.sin(d / 200), 50 + 3 * Math.sin(d / 120)] },
+  { id: 'bulb', name: '球部尿道', sub: '少し広くなる。一気に駆け抜けろ', len: 1100, speed: 158,
+    prof: (e, d) => [180 + 34 * Math.sin(d / 260), 68 + 8 * Math.sin(d / 140)] },
+  { id: 'pend', name: '振子部尿道', sub: '出口は目前。最後まで気を抜くな', len: 1300, speed: 165,
+    prof: (e, d) => [180 + 38 * Math.sin(d / 280) + 18 * Math.sin(d / 120 + 1), 54 + 6 * Math.sin(d / 150)] },
+  { id: 'fossa', name: '舟状窩', sub: '出口手前のふくらみ。外尿道口はすぐそこ', len: 450, speed: 150,
+    prof: (e, d) => [lerp(180 + 20 * Math.sin(d / 200), 180, sstep(e / 450)), 54 + 18 * Math.sin(Math.PI * clamp(e / 450, 0, 1))] }
+];
+let acc = 0;
+for(const sec of SECTIONS){ sec.start = acc; acc += sec.len; }
+const END = acc;
+const SEC = id => SECTIONS.find(x => x.id === id);
+const URETER_START = SEC('upper').start, URETER_END = SEC('uvj').start + SEC('uvj').len;
+const BLADDER = SEC('bladder');
+const ILIAC_C = SEC('iliac').start + 400;
+const GATE_D = SEC('memb').start + 320;
+const BLEND = 200;
+
+function secIndex(d){ for(let i = SECTIONS.length - 1; i >= 0; i--){ if(d >= SECTIONS[i].start) return i; } return 0; }
+function blend(d, f){
+  const i = secIndex(d), sec = SECTIONS[i], a = f(sec);
+  if(i > 0 && d - sec.start < BLEND / 2){ const t = sstep((d - (sec.start - BLEND / 2)) / BLEND); return [f(SECTIONS[i - 1]), a, t]; }
+  if(i < SECTIONS.length - 1 && SECTIONS[i + 1].start - d < BLEND / 2){ const n = SECTIONS[i + 1], t = sstep((d - (n.start - BLEND / 2)) / BLEND); return [a, f(n), t]; }
+  return [a, a, 0];
+}
+function base(d){
+  const [a, b, t] = blend(d, sec => sec.prof(d - sec.start, d));
+  return [lerp(a[0], b[0], t), Math.max(0, lerp(a[1], b[1], t))];
+}
+function baseSpeed(d){
+  const [a, b, t] = blend(d, sec => sec.speed);
+  return lerp(a, b, t);
+}
+function waveAt(d){
+  if(!G) return 0;
+  let v = 0;
+  for(const wv of G.waves) v += gauss(d - wv.d, 45);
+  return Math.min(1, v);
+}
+function pulseNow(){
+  if(!G) return 0;
+  const ph = G.t % 0.9;
+  return gauss(ph - 0.08, 0.05) + 0.6 * gauss(ph - 0.3, 0.05);
+}
+function gateK(){
+  if(!G) return 0;
+  const ph = G.t % 4.4;
+  if(ph < 2.2) return 0;
+  if(ph < 2.6) return sstep((ph - 2.2) / 0.4);
+  if(ph < 4.0) return 1;
+  return 1 - sstep((ph - 4.0) / 0.4);
+}
+function safeHalfWidth(d, span){
+  let w = 1e9;
+  for(let k = -span; k <= span; k += 20){
+    const dd = d + k;
+    let b = base(dd)[1];
+    if(dd > URETER_START - 100 && dd < URETER_END + 100) b *= 0.8;
+    if(Math.abs(dd - ILIAC_C) < 320) b *= 0.78;
+    if(Math.abs(dd - GATE_D) < 140) b *= 0.2;
+    w = Math.min(w, b);
+  }
+  return w;
+}
+function mobNear(d, range){ return G.mobs.some(m => m.pop === 0 && Math.abs(m.d - d) < range); }
+function tube(d){
+  const b = base(d);
+  let w = b[1];
+  if(d > URETER_START - 100 && d < URETER_END + 100) w *= 1 - 0.2 * waveAt(d);
+  const zi = gauss(d - ILIAC_C, 170); if(zi > 0.01) w *= 1 - 0.22 * pulseNow() * zi;
+  const zg = gauss(d - GATE_D, 35); if(zg > 0.01) w *= 1 - 0.8 * gateK() * zg;
+  if(G) w *= 1 + 0.3 * G.relaxK;
+  return [b[0], w];
+}
+
+/* ---------- ゲーム状態 ---------- */
+let G = null;
+function newGame(mode){
+  G = {
+    state: mode || 'play', t: 0,
+    stone: { d: 0, x: 180, tx: 180, vx: 0, r: 14, hitCd: 0, hitFx: 0 },
+    pain: 0, totalPain: 0, lastContact: 0, painLvl: 0,
+    stamina: 100, fun: false, waterT: 0, relaxT: 0, relaxK: 0, speed: 95,
+    waves: [], waveT: 1.6, shocks: [], swT: 3,
+    scope: { on: false, x: 180, gap: 480, phase: 'idle', pt: 0, lungeT: 6, laserT: 2.2, beamX: 180, lx: 180, hitCd: 0, gapStart: 200, beamHit: false },
+    baskets: [], bkT: 2.5, items: [], itemT: 6,
+    mobs: [], nextMobD: 380,
+    parts: [], floats: [], banners: [], flags: {}, shake: 0, say: null,
+    lastSec: 0, gateHit: false, endT: 0, bubbles: [], reason: null
+  };
+  for(let i = 0; i < 44; i++) G.bubbles.push({ d: Math.random() * (H + 40) - SY - 20, u: Math.random() * 2 - 1, k: 0.8 + Math.random() * 0.6 });
+  if(G.state === 'play'){ banner('腎杯', '石が生まれた場所。ここから外尿道口を目指せ'); unlock('sec_calyx'); }
+}
+
+function banner(title, sub){ G.banners.push({ title, sub, t: 0, dur: 2.4 }); }
+function hint(key, title, sub){ unlock(key); if(!G.flags[key]){ G.flags[key] = 1; banner(title, sub); } }
+
+/* ---------- 豆知識 ---------- */
+const TRIVIA = [
+  { id: 'sec_calyx',  cat: 'コース', name: '腎杯', text: '腎臓でつくられた尿が最初に集まる、杯のような形の部屋。尿路結石は腎杯や腎盂で生まれることが多い。' },
+  { id: 'sec_pelvis', cat: 'コース', name: '腎盂', text: '腎杯から集まった尿を受け止める漏斗状の部分。ここから尿管へ尿を送り出す。' },
+  { id: 'sec_upj',    cat: 'コース', name: '腎盂尿管移行部', text: '尿管には生理的に狭い場所（生理的狭窄部）が3か所あり、結石が引っかかりやすい。ここはその1つめ。' },
+  { id: 'sec_upper',  cat: 'コース', name: '上部尿管', text: '尿管は長さ25〜30cmほど、太さ数mmの細い管。重力ではなく蠕動運動で尿を膀胱へ運ぶので、逆立ちしていても尿は流れる。' },
+  { id: 'sec_iliac',  cat: 'コース', name: '総腸骨動脈交差部', text: '尿管は骨盤に入るところで腸骨動脈の前を横切る。ここが2つめの狭窄部。' },
+  { id: 'sec_lower',  cat: 'コース', name: '下部尿管', text: '骨盤の中を走る部分。男性では精管が、女性では子宮動脈が尿管の上をまたいで通る。' },
+  { id: 'sec_uvj',    cat: 'コース', name: '尿管膀胱移行部', text: '尿管でいちばん狭い3つめの狭窄部。尿管は膀胱の壁を斜めに貫いているので、膀胱に尿が溜まっても尿管へ逆流しにくい。' },
+  { id: 'sec_bladder',cat: 'コース', name: '膀胱', text: '大人の膀胱はおよそ300〜500mL入る。150〜200mLほど溜まると尿意を感じ始める。' },
+  { id: 'sec_prost',  cat: 'コース', name: '前立腺部尿道', text: '男性の尿道は長さ16〜20cmほど、女性は3〜4cmほど。前立腺部尿道は前立腺の中を通る部分。' },
+  { id: 'sec_memb',   cat: 'コース', name: '膜様部尿道', text: '尿道でいちばん短く、広がりにくい部分。外尿道括約筋に囲まれていて、おしっこを我慢するときに締めているのはこの筋肉。' },
+  { id: 'sec_bulb',   cat: 'コース', name: '球部尿道', text: '尿道球という海綿体の中を通る、少しふくらんだ部分。' },
+  { id: 'sec_pend',   cat: 'コース', name: '振子部尿道', text: '陰茎の中を通る部分。球部と合わせて海綿体部尿道と呼ばれ、尿道でいちばん長い。' },
+  { id: 'sec_fossa',  cat: 'コース', name: '舟状窩', text: '出口のすぐ手前のふくらみ。その先の外尿道口は尿道でいちばん狭い場所で、最後の関門になりやすい。' },
+  { id: 'shock',      cat: '医療チーム', name: '衝撃波（ESWL）', text: '体外衝撃波結石破砕術。体の外から衝撃波を当てて結石を細かく砕き、砂のようにして尿と一緒に出す。体を切らずに済む治療。' },
+  { id: 'scope',      cat: '医療チーム', name: '内視鏡（尿管鏡）', text: '尿道から細い内視鏡を入れ、結石を直接見ながら治療する。経尿道的尿管結石破砕術（TUL）と呼ばれる。' },
+  { id: 'laser',      cat: '医療チーム', name: 'レーザー', text: '内視鏡での治療では、主にホルミウム・ヤグ（Ho:YAG）レーザーで結石を砕く。' },
+  { id: 'basket',     cat: '医療チーム', name: 'バスケットカテーテル', text: '先端のかごで結石をつかんで取り出す器具。砕いた破片の回収にも使う。' },
+  { id: 'boss',       cat: '医療チーム', name: '主治医', text: '尿路結石を診るのは泌尿器科。CT検査で結石の位置や大きさを調べ、自然に出るのを待つか治療するかを決める。' },
+  { id: 'mob_crystal',  cat: '雑魚敵', name: 'シュウ酸カルシウム結晶', text: '尿路結石でいちばん多い成分。シュウ酸はほうれん草やたけのこ、チョコレートなどに多く含まれる。' },
+  { id: 'mob_bacteria', cat: '雑魚敵', name: '大腸菌', text: '尿路感染症の原因菌として最も多い。結石で尿の流れが悪くなると、感染を起こしやすくなることがある。' },
+  { id: 'mob_wbc',      cat: '雑魚敵', name: '白血球（好中球）', text: '入り込んだ細菌や異物に集まって退治する免疫細胞。尿に白血球がたくさん混じるのは感染のサイン。' },
+  { id: 'item_water', cat: 'アイテム', name: '水分補給', text: '結石予防の基本は水分。1日の尿量が2Lを超えるくらい水分をとることがすすめられている。' },
+  { id: 'item_pill',  cat: 'アイテム', name: '鎮痛剤', text: '結石の激しい痛み（疝痛発作）には、主にNSAIDs（非ステロイド性抗炎症薬）が使われる。' },
+  { id: 'item_relax', cat: 'アイテム', name: 'リラックス', text: '尿管の筋肉をゆるめて結石が出やすくなるよう助ける薬（α1遮断薬など）が使われることがある。' },
+  { id: 'item_buddy', cat: 'アイテム', name: '仲間の石', text: '結石は1個とは限らない。いくつもできていたり、砂のような細かい結石が一緒に出てきたりすることもある。' },
+  { id: 'wave',       cat: 'からだ', name: '蠕動運動', text: '尿管は1分間に数回、波のように縮んで尿を送り出している。結石が詰まるとこの動きが強まり、激痛の原因になる。' },
+  { id: 'pain',       cat: 'からだ', name: '結石の痛み', text: '「痛みの王様」と呼ばれることもあるほどの激痛。背中や脇腹に突然現れ、吐き気をともなうこともある。' },
+  { id: 'small',      cat: 'からだ', name: '自然排石', text: '一般に5mm程度までの小さな結石は、水分をとって待つと自然に出てくることが多い。大きいと治療が必要になりやすい。' }
+];
+const TRIVIA_IDS = new Set(TRIVIA.map(x => x.id));
+let triviaGot = new Set(store.get('trivia', []));
+function unlock(id){
+  if(!TRIVIA_IDS.has(id) || triviaGot.has(id)) return;
+  triviaGot.add(id); store.set('trivia', Array.from(triviaGot));
+  if(G && G.state === 'play'){
+    const t = TRIVIA.find(x => x.id === id);
+    G.newTrivia = (G.newTrivia || 0) + 1;
+    G.toast = { text: '豆知識ゲット：' + t.name, t: 0 };
+  }
+}
+
+function floatText(text, x, y, color){ G.floats.push({ text, x, y, t: 0, color: color || '#FFF6E6' }); }
+function spark(x, y, color, n){
+  for(let i = 0; i < (n || 8); i++){
+    const a = Math.random() * Math.PI * 2, v = 60 + Math.random() * 120;
+    G.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, life: 0.35 + Math.random() * 0.25, color });
+  }
+}
+
+function addPain(p, isHit){
+  p *= M.painMul;
+  G.pain += p; G.totalPain += p;
+  if(isHit){
+    G.shake = Math.max(G.shake, 0.25);
+    G.stone.hitFx = 0.4;
+    sfx.hit(); buzz(30);
+    const list = G.pain >= 80 ? M.ouchMax : M.ouch;
+    G.say = { text: list[Math.floor(Math.random() * list.length)], t: 0 };
+  }
+  if(G.pain >= 100){ G.pain = 100; gameOver('pain'); }
+}
+function damage(dr){
+  const s = G.stone;
+  s.r -= dr * M.dmgMul;
+  spark(s.x, SY, '#F4D27A', 10);
+  if(s.r < 6){ s.r = 6; gameOver('crush'); }
+}
+function gameOver(reason){
+  if(G.state !== 'play') return;
+  G.state = 'over'; G.reason = reason; G.endT = 0;
+  sfx.lose(); buzz(220);
+}
+
+/* ---------- 入力 ---------- */
+const keys = { left: false, right: false, fun: false };
+let funPointer = null, dragPointer = null, lastDragX = 0;
+const FUN_BTN = { x: 306, y: 580, r: 36 }, PAUSE_BTN = { x: 326, y: 40, r: 18 };
+
+function toLocal(e){
+  const r = cv.getBoundingClientRect();
+  return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height];
+}
+cv.addEventListener('pointerdown', e => {
+  if(!G || G.state !== 'play') return;
+  const [x, y] = toLocal(e);
+  try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  if(Math.hypot(x - PAUSE_BTN.x, y - PAUSE_BTN.y) < PAUSE_BTN.r + 8){ pauseGame(); return; }
+  if(Math.hypot(x - FUN_BTN.x, y - FUN_BTN.y) < FUN_BTN.r + 6){ funPointer = e.pointerId; return; }
+  dragPointer = e.pointerId; lastDragX = x;
+  e.preventDefault();
+});
+cv.addEventListener('pointermove', e => {
+  if(e.pointerId !== dragPointer || !G) return;
+  const [x] = toLocal(e);
+  G.stone.tx += (x - lastDragX) * 1.3;
+  lastDragX = x;
+});
+function endPointer(e){
+  if(e.pointerId === funPointer) funPointer = null;
+  if(e.pointerId === dragPointer) dragPointer = null;
+}
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
+
+window.addEventListener('keydown', e => {
+  if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+  else if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+  else if(e.key === ' ' || e.key === 'ArrowDown' || e.key === 's'){ keys.fun = true; e.preventDefault(); }
+  else if(e.key === 'Escape' || e.key === 'p'){ if(G && G.state === 'play') pauseGame(); else if(G && G.state === 'pause') resumeGame(); }
+});
+window.addEventListener('keyup', e => {
+  if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+  else if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+  else if(e.key === ' ' || e.key === 'ArrowDown' || e.key === 's') keys.fun = false;
+});
+document.addEventListener('visibilitychange', () => { if(document.hidden && G && G.state === 'play') pauseGame(); });
+
+/* ---------- 更新 ---------- */
+function moveStone(dt){
+  const s = G.stone, px = s.x;
+  s.x += clamp(s.tx - s.x, -430 * dt, 430 * dt);
+  s.vx = (s.x - px) / Math.max(dt, 1e-4);
+}
+function updBubbles(dt){
+  const s = G.stone;
+  for(const b of G.bubbles){
+    b.d += G.speed * 1.3 * b.k * dt;
+    if(b.d > s.d + H - SY + 20){ b.d = s.d - SY - 10 - Math.random() * 30; b.u = Math.random() * 2 - 1; }
+    if(b.d < s.d - SY - 60) b.d = s.d + Math.random() * (H - SY);
+  }
+}
+function updateFx(dt){
+  const s = G.stone;
+  s.hitCd = Math.max(0, s.hitCd - dt);
+  s.hitFx = Math.max(0, s.hitFx - dt);
+  G.shake = Math.max(0, G.shake - dt * 1.4);
+  for(const p of G.parts){ p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.92; p.vy *= 0.92; }
+  G.parts = G.parts.filter(p => p.t < p.life);
+  for(const f of G.floats){ f.t += dt; f.y -= 26 * dt; }
+  G.floats = G.floats.filter(f => f.t < 1.1);
+  if(G.banners.length){ G.banners[0].t += dt; if(G.banners[0].t > G.banners[0].dur) G.banners.shift(); }
+  if(G.say){ G.say.t += dt; if(G.say.t > 1.1) G.say = null; }
+}
+
+function collideWalls(cx, w, wallV, wV, dt){
+  const s = G.stone, L = cx - w + s.r, R = cx + w - s.r;
+  let touched = false;
+  if(L >= R){ s.x = cx; s.tx = cx; touched = true; addPain(10 * dt, false); }
+  else if(s.x < L){ hitWall(Math.max(0, (wallV - wV) - s.vx), L, 1); touched = true; }
+  else if(s.x > R){ hitWall(Math.max(0, s.vx - (wallV + wV)), R, -1); touched = true; }
+  if(touched){ G.lastContact = G.t; if(s.hitCd > 0 && G.state === 'play') addPain(6 * dt, false); }
+  s.tx = clamp(s.tx, L - 6, R + 6);
+}
+function hitWall(imp, edge, dir){
+  const s = G.stone;
+  s.x = edge;
+  if(s.hitCd <= 0){
+    s.hitCd = 0.35;
+    s.tx = edge + dir * 10;
+    spark(s.x - dir * s.r, SY, '#FFD1C7', 7);
+    addPain(3.5 + 6 * Math.min(1, imp / 350), true);
+  }
+}
+
+function update(dt){
+  if(!G) return;
+  const s = G.stone;
+
+  if(G.state === 'demo'){
+    G.speed = 90;
+    const [cx] = tube(s.d + 40);
+    s.tx = cx; moveStone(dt);
+    s.d += 90 * dt;
+    if(s.d > URETER_START + 900){ s.d = 0; }
+    updBubbles(dt);
+    return;
+  }
+  if(G.state === 'pause') return;
+  if(G.state === 'over'){
+    G.endT += dt; updateFx(dt);
+    if(G.endT > 1.2 && !G.finished){ G.finished = true; finish(false); }
+    return;
+  }
+  if(G.state === 'win'){
+    G.endT += dt; s.d += 200 * dt; updBubbles(dt); updateFx(dt);
+    if(G.endT > 1.3 && !G.finished){ G.finished = true; finish(true); }
+    return;
+  }
+
+  G.t += dt;
+  if(keys.left) s.tx -= 330 * dt;
+  if(keys.right) s.tx += 330 * dt;
+  const wantFun = keys.fun || funPointer !== null;
+  G.fun = wantFun && G.stamina > 3;
+  if(G.fun) G.stamina = Math.max(0, G.stamina - 40 * dt);
+  else G.stamina = Math.min(100, G.stamina + 18 * dt);
+
+  G.waterT = Math.max(0, G.waterT - dt);
+  G.relaxT = Math.max(0, G.relaxT - dt);
+  G.relaxK += ((G.relaxT > 0 ? 1 : 0) - G.relaxK) * Math.min(1, dt * 4);
+
+  const band = SECTIONS[secIndex(s.d)].ureter ? waveAt(s.d) : 0;
+  G.speed = baseSpeed(s.d) * (1 + 0.3 * clamp(s.d / END, 0, 1)) * (G.waterT > 0 ? 1.45 : 1) * (G.fun ? 0.45 : 1) * (1 + 0.55 * band);
+
+  const [pcx, pw] = tube(s.d);
+  s.d += G.speed * dt;
+  // 尿道括約筋
+  const gk = gateK();
+  if(gk > 0.6 && s.d > GATE_D - 42 && s.d < GATE_D + 8){
+    s.d = GATE_D - 42;
+    if(!G.gateHit){ G.gateHit = true; floatText('括約筋に阻まれた', s.x, SY - 30, '#FFD1C7'); addPain(5, true); if(G.state !== 'play') return; }
+  } else if(gk < 0.2) G.gateHit = false;
+  moveStone(dt);
+  const [cx, w] = tube(s.d);
+  collideWalls(cx, w, (cx - pcx) / dt, (w - pw) / dt, dt);
+  if(G.state !== 'play') return;
+
+  if(G.t - G.lastContact > M.decayDelay) G.pain = Math.max(0, G.pain - M.decay * dt);
+
+  // 痛みレベル
+  const lvl = G.pain >= 90 ? 3 : G.pain >= 60 ? 2 : G.pain >= 30 ? 1 : 0;
+  if(G.pain >= 50) unlock('pain');
+  if(lvl > G.painLvl && !G.flags['pl' + lvl]){
+    G.flags['pl' + lvl] = 1;
+    if(lvl === 1) banner('宿主が病院に電話した', '衝撃波の間隔が短くなる');
+    if(lvl === 2) banner('宿主がうずくまった', '内視鏡チームが本気を出す');
+    if(lvl === 3) banner('宿主、悶絶', 'バスケットカテーテルが出てくる…！');
+  }
+  G.painLvl = lvl;
+
+  // 区間の切り替わり
+  const si = secIndex(s.d), sec = SECTIONS[si];
+  if(si !== G.lastSec){
+    G.lastSec = si;
+    banner(sec.tag ? sec.name + '（' + sec.tag + '）' : sec.name, sec.sub);
+    unlock('sec_' + sec.id);
+    if(sec.id === 'fossa') unlock('small');
+    if(sec.id === 'bladder'){ G.bkT = 2.2; if(!G.boss) startBoss(); }
+  }
+
+  // 蠕動運動
+  if(sec.ureter && s.d < URETER_END - 300){
+    G.waveT -= dt;
+    if(G.waveT <= 0){ G.waves.push({ d: s.d - SY - 40 }); G.waveT = 3.4; hint('wave', '蠕動の波', '波に乗ると加速する。ただし管が締まる'); }
+  }
+  for(const wv of G.waves) wv.d += 175 * dt;
+  G.waves = G.waves.filter(wv => wv.d < s.d + H);
+
+  // 衝撃波（ESWL）
+  const eswlZone = si <= SECTIONS.indexOf(SEC('upper'));
+  const kidney = si <= SECTIONS.indexOf(SEC('pelvis'));
+  if((eswlZone || G.pain >= 30) && !bossActive()) G.swT -= dt;
+  if(G.swT <= 0){
+    const lead = 1.5, d = s.d + G.speed * lead, [tcx] = tube(d), sw0 = safeHalfWidth(d, 60), R = Math.min(42, (sw0 - 14 - 10) / 0.8);
+    if(R < 16 || mobNear(d, 70)){ G.swT = 0.8; }
+    else {
+    const x = clamp(s.x, tcx - sw0 + R * 0.5, tcx + sw0 - R * 0.5);
+    G.shocks.push({ d, x, R, t: 0, dur: lead, done: false, bt: 0 });
+    G.swT = (kidney ? 3.6 : (G.pain >= 30 ? 4.4 : 7.2) * (eswlZone ? 1 : 1.4)) * M.shockMul;
+    hint('shock', '衝撃波（ESWL）', '照準から横に逃げるか、踏ん張って時間をずらせ');
+    }
+  }
+  for(const sw of G.shocks){
+    if(!sw.done){
+      sw.t += dt;
+      if(sw.t >= sw.dur){
+        sw.done = true; sfx.boom(); G.shake = Math.max(G.shake, 0.4); buzz(60);
+        if(Math.hypot(s.x - sw.x, s.d - sw.d) < sw.R * 0.8){
+          floatText('衝撃波 直撃！', s.x, SY - 30, '#9FE0FF');
+          damage(1.6);
+          if(G.state === 'play') addPain(7, true);
+        }
+      }
+    } else sw.bt += dt;
+  }
+  G.shocks = G.shocks.filter(sw => !sw.done || sw.bt < 0.5);
+  if(G.state !== 'play') return;
+
+  // 内視鏡・レーザー
+  const sc = G.scope;
+  const scopeWanted = s.d > SEC('lower').start || G.pain >= 60;
+  if(scopeWanted && !sc.on){
+    sc.on = true; sc.gap = 460; sc.x = s.x; sc.laserT = 2.2; sc.lungeT = 6; unlock('scope');
+    banner('内視鏡（尿管鏡）が出動！', '尿道側から登ってきた。赤い線はレーザーの予告');
+  }
+  if(sc.on && !bossActive()) updScope(dt, w);
+  updBoss(dt);
+  if(G.state !== 'play') return;
+  if(G.state !== 'play') return;
+
+  // バスケットカテーテル
+  if((s.d >= BLADDER.start - 100 || G.pain >= 90) && !bossActive()){
+    G.bkT -= dt;
+    if(G.bkT <= 0){
+      if(!spawnBasketAt(s.x, false)) G.bkT = 0.8;
+      else G.bkT = (G.pain >= 90 ? 2.8 : 5.2) * M.basketMul;
+    }
+  }
+  for(const b of G.baskets){
+    if(b.state === 'open'){
+      b.t += dt;
+      if(b.t >= b.dur){
+        b.state = 'close'; sfx.snap();
+        if(Math.hypot(s.x - b.x, s.d - b.d) < b.R * 0.85){ gameOver('basket'); return; }
+      }
+    } else b.ct += dt;
+  }
+  G.baskets = G.baskets.filter(b => b.state === 'open' || b.ct < 0.6);
+
+  // アイテム
+  G.itemT -= dt;
+  if(G.itemT <= 0){
+    const d = s.d + H - SY + 30, [tcx, tw] = tube(d), r = Math.random();
+    const type = r < 0.33 ? 'water' : r < 0.53 ? 'pill' : r < 0.78 ? 'relax' : 'buddy';
+    G.items.push({ d, u: (Math.random() * 2 - 1) * 0.75, type, bob: Math.random() * 6 });
+    G.itemT = M.item[0] + Math.random() * M.item[1];
+  }
+  for(const it of G.items){
+    const [icx, iw] = tube(it.d), ix = icx + it.u * Math.max(0, iw - 16);
+    if(!it.got && Math.abs(it.d - s.d) < s.r + 12 && Math.abs(ix - s.x) < s.r + 12){ it.got = true; pickup(it.type, ix); }
+  }
+  G.items = G.items.filter(it => !it.got && it.d > s.d - SY - 30);
+
+  updMobs(dt, si);
+  if(G.state !== 'play') return;
+
+  updBubbles(dt);
+  updateFx(dt);
+
+  if(s.d >= END){ G.state = 'win'; G.endT = 0; sfx.win(); buzz(80); }
+}
+
+const MOB = {
+  crystal:  { e: 11, pain: 7,  dmg: 0,   name: 'シュウ酸カルシウム結晶', sub: 'トゲトゲの結晶。止まっているけど触ると痛い', say: 'チクッ' },
+  bacteria: { e: 13, pain: 6,  dmg: 0,   name: '大腸菌', sub: '左右にうろうろ。動きを読んでよけろ', say: 'ヌルッ' },
+  wbc:      { e: 13, pain: 5,  dmg: 0.4, name: '白血球（好中球）', sub: '異物（キミ）を見つけると寄ってくる', say: '異物発見！' }
+};
+const MOB_GAP = { easy: 340, normal: 300, hard: 220 };
+function mobType(si){
+  const id = SECTIONS[si].id, r = Math.random();
+  if(id === 'calyx' || id === 'pelvis' || id === 'upj') return r < 0.75 ? 'crystal' : 'bacteria';
+  if(SECTIONS[si].ureter) return r < 0.3 ? 'crystal' : r < 0.7 ? 'bacteria' : 'wbc';
+  if(id === 'bladder') return r < 0.6 ? 'bacteria' : 'wbc';
+  return r < 0.2 ? 'crystal' : r < 0.65 ? 'bacteria' : 'wbc';
+}
+function updMobs(dt, si){
+  const s = G.stone, ahead = s.d + H - SY + 40;
+  while(G.nextMobD < ahead){
+    const d = G.nextMobD, prog = clamp(d / END, 0, 1);
+    G.nextMobD += MOB_GAP[MODE] * (1 - 0.3 * prog) * (0.7 + Math.random() * 0.6);
+    if(Math.abs(d - GATE_D) < 90 || d > END - 120) continue;
+    if(d > BLADDER.start + 150 && d < BLADDER.start + BLADDER.len - 100 && Math.random() < 0.65) continue;
+    let type = mobType(secIndex(d));
+    if(type === 'wbc' && safeHalfWidth(d, 120) < 56) type = 'bacteria';
+    const m = MOB[type], [cx, w] = tube(d);
+    let x = cx + (Math.random() * 2 - 1) * Math.max(0, w - m.e - 4);
+    const need = 2 * s.r + 12;
+    if((x - m.e) - (cx - w) < need && (cx + w) - (x + m.e) < need) x = cx - w + m.e + 2;
+    G.mobs.push({ type, d, x, e: m.e, ph: Math.random() * Math.PI * 2, spd: 1.2 + Math.random() * 0.8, face: 1, pop: 0 });
+    hint('mob_' + type, m.name, m.sub);
+  }
+  const chase = { easy: 30, normal: 45, hard: 62 }[MODE];
+  for(const mb of G.mobs){
+    if(mb.pop > 0){ mb.pop += dt; continue; }
+    const [cx, w] = tube(mb.d), lim = Math.max(0, w - mb.e - 2);
+    if(mb.type === 'bacteria'){
+      const nx = cx + lim * 0.92 * Math.sin(G.t * mb.spd + mb.ph);
+      mb.face = nx >= mb.x ? 1 : -1; mb.x = nx;
+    } else if(mb.type === 'wbc'){
+      const dy = mb.d - s.d;
+      if(dy < 300 && dy > 130){ const dir = Math.sign(s.x - mb.x); mb.x += dir * chase * dt; mb.face = dir || mb.face; mb.alert = true; }
+      else if(dy <= 130) mb.alert = false;
+      mb.x = clamp(mb.x, cx - lim, cx + lim);
+    } else {
+      mb.x = clamp(mb.x, cx - lim, cx + lim);
+    }
+    if(Math.hypot(s.x - mb.x, s.d - mb.d) < s.r + mb.e * 0.85){
+      const m = MOB[mb.type];
+      mb.pop = 0.001;
+      spark(mb.x, SY + (mb.d - s.d), mb.type === 'crystal' ? '#DDEBFF' : mb.type === 'bacteria' ? '#A5D86B' : '#E8DDF5', 9);
+      floatText(m.say, mb.x, SY + (mb.d - s.d) - 18, '#FFF6E6');
+      if(m.dmg) damage(m.dmg);
+      if(G.state === 'play') addPain(m.pain, true);
+      if(G.state !== 'play') return;
+    }
+  }
+  G.mobs = G.mobs.filter(mb => (mb.pop === 0 || mb.pop < 0.3) && mb.d > s.d - SY - 40);
+}
+
+function drawMobShape(mb, t){
+  const e = mb.e;
+  if(mb.type === 'crystal'){
+    ctx.rotate(t * 0.6 + mb.ph);
+    ctx.beginPath();
+    for(let i = 0; i < 16; i++){ const a = i / 16 * Math.PI * 2, k = i % 2 ? e * 0.55 : e * 1.15; i ? ctx.lineTo(Math.cos(a) * k, Math.sin(a) * k) : ctx.moveTo(Math.cos(a) * k, Math.sin(a) * k); }
+    ctx.closePath(); ctx.fillStyle = 'rgba(221,235,255,0.95)'; ctx.fill(); ctx.lineWidth = 1.6; ctx.strokeStyle = '#5A7BA6'; ctx.stroke();
+    ctx.rotate(-(t * 0.6 + mb.ph));
+    ctx.strokeStyle = '#1F2E45'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(-5, -3); ctx.lineTo(-1.5, -1.5); ctx.moveTo(5, -3); ctx.lineTo(1.5, -1.5); ctx.stroke();
+    ctx.fillStyle = '#1F2E45'; ctx.beginPath(); ctx.arc(-3, 0.5, 1.3, 0, Math.PI * 2); ctx.arc(3, 0.5, 1.3, 0, Math.PI * 2); ctx.fill();
+  } else if(mb.type === 'bacteria'){
+    ctx.scale(mb.face, 1);
+    ctx.strokeStyle = '#4E7A24'; ctx.lineWidth = 1.2;
+    for(let i = 0; i < 4; i++){
+      ctx.beginPath(); const sy = -5 + i * 3.3; ctx.moveTo(-e, sy);
+      for(let k = 1; k <= 5; k++) ctx.lineTo(-e - k * 3, sy + Math.sin(t * 12 + k + i) * 2.2);
+      ctx.stroke();
+    }
+    rr(-e, -e * 0.55, e * 2, e * 1.1, e * 0.55); ctx.fillStyle = '#A5D86B'; ctx.fill(); ctx.lineWidth = 1.8; ctx.strokeStyle = '#3F6A1C'; ctx.stroke();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath(); ctx.arc(e * 0.3, -1.5, 3.2, 0, Math.PI * 2); ctx.arc(e * 0.72, -1.5, 3.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1B2A0E';
+    ctx.beginPath(); ctx.arc(e * 0.36, -1, 1.5, 0, Math.PI * 2); ctx.arc(e * 0.78, -1, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#1B2A0E'; ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.arc(e * 0.55, 3, 2.5, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+  } else {
+    ctx.beginPath();
+    for(let i = 0; i <= 24; i++){ const a = i / 24 * Math.PI * 2, k = e * (1 + 0.08 * Math.sin(a * 5 + t * 4 + mb.ph)); i ? ctx.lineTo(Math.cos(a) * k, Math.sin(a) * k) : ctx.moveTo(Math.cos(a) * k, Math.sin(a) * k); }
+    ctx.closePath(); ctx.fillStyle = 'rgba(236,226,248,0.96)'; ctx.fill(); ctx.lineWidth = 1.8; ctx.strokeStyle = '#7A5CA6'; ctx.stroke();
+    ctx.fillStyle = 'rgba(122,92,166,0.45)';
+    [[-5, 4], [0, 6], [5, 4]].forEach(p => { ctx.beginPath(); ctx.arc(p[0], p[1], 2.6, 0, Math.PI * 2); ctx.fill(); });
+    ctx.strokeStyle = '#2E1F45'; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(-7, -6); ctx.lineTo(-2, -4); ctx.moveTo(7, -6); ctx.lineTo(2, -4); ctx.stroke();
+    ctx.fillStyle = '#2E1F45'; const lx = mb.alert ? mb.face * 1.2 : 0;
+    ctx.beginPath(); ctx.arc(-4 + lx, -1.5, 1.6, 0, Math.PI * 2); ctx.arc(4 + lx, -1.5, 1.6, 0, Math.PI * 2); ctx.fill();
+    if(mb.alert && mb.pop === 0){
+      ctx.fillStyle = '#FF4D6D'; ctx.font = '400 13px ' + DISPLAY; ctx.textAlign = 'center'; ctx.fillText('！', 0, -e - 3);
+    }
+  }
+}
+
+function drawMobs(){
+  const s = G.stone;
+  for(const mb of G.mobs){
+    const y = SY + (mb.d - s.d);
+    if(y < -30 || y > H + 30) continue;
+    ctx.save(); ctx.translate(mb.x, y);
+    if(mb.pop > 0){ const k = 1 + mb.pop * 3; ctx.globalAlpha = Math.max(0, 1 - mb.pop / 0.3); ctx.scale(k, k); }
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    drawMobShape(mb, G.t);
+    ctx.restore();
+  }
+}
+
+/* ---------- ボス：主治医スコープ ---------- */
+const BOSS_IDLE = { easy: 2.2, normal: 1.4, hard: 0.85 };
+const BOSS_NETS = { easy: 2, normal: 3, hard: 3 };
+function bossActive(){ return !!(G && G.boss && G.boss.phase !== 'gone'); }
+function bossSay(t, dur){ G.boss.line = t; G.boss.lineT = dur || 1.6; }
+function startBoss(){
+  unlock('boss');
+  G.boss = { phase: 'enter', pt: 0, x: 180, y: H + 140, last: null, beams: [], lx: 180, hits: 0, line: '', lineT: 0, hitCd: 0, netN: 0, netT: 0, beamHit: false };
+  G.scope.gap = 460; G.scope.phase = 'idle';
+  bossSay('主治医や。大人しゅう回収されとき', 2.6);
+  banner('ボス：主治医スコープ', '尿意が溜まるまで耐え抜け！');
+  G.shake = Math.max(G.shake, 0.5); sfx.boom(); buzz(120);
+}
+function spawnBasketAt(xWant, boss){
+  const s = G.stone, lead = 1.35, d = s.d + G.speed * lead, [tcx] = tube(d), sw0 = safeHalfWidth(d, 80);
+  const R = Math.min(50, (sw0 - 14 - 12) / 0.9) * (MODE === 'easy' ? 0.8 : 1);
+  if(R < 22 || mobNear(d, 100) || G.baskets.some(b => b.state === 'open' && Math.abs(b.d - d) < 70)) return false;
+  const x = clamp(xWant, tcx - sw0 + R * 0.6, tcx + sw0 - R * 0.6);
+  G.baskets.push({ d, x, R, t: 0, dur: lead, state: 'open', ct: 0, boss: !!boss });
+  sfx.snap();
+  hint('basket', 'バスケットカテーテル', '網が閉じたら即回収。避けるか、踏ん張って待て');
+  return true;
+}
+function updBoss(dt){
+  const b = G.boss, s = G.stone;
+  if(!b || b.phase === 'gone') return;
+  b.pt += dt; b.lineT -= dt; b.hitCd = Math.max(0, b.hitCd - dt);
+  const [cx, w] = tube(s.d), homeY = 548;
+  if(b.phase !== 'leave' && s.d > BLADDER.start + BLADDER.len - 120){
+    b.phase = 'leave'; b.pt = 0; b.beams = [];
+    const bonus = b.hits === 0 ? 1000 : 500;
+    G.bossBonus = bonus;
+    bossSay('くっ…排尿が始まってもうた…', 2.5);
+    banner(b.hits === 0 ? 'ボス撃退！ノーダメージ' : 'ボス撃退！', 'ボーナス +' + bonus + '　このまま尿道へ');
+    sfx.win();
+    return;
+  }
+  switch(b.phase){
+    case 'enter':
+      b.y = lerp(H + 140, homeY, sstep(b.pt / 1.3));
+      if(b.pt >= 1.6){ b.phase = 'idle'; b.pt = 0; }
+      break;
+    case 'idle':
+      b.x += (s.x - b.x) * Math.min(1, dt * 1.5);
+      b.y = homeY + Math.sin(G.t * 2) * 4;
+      if(b.pt >= BOSS_IDLE[MODE]){
+        const opts = ['beams', 'nets', 'lunge'].filter(a => a !== b.last);
+        const a = opts[Math.floor(Math.random() * opts.length)];
+        b.last = a; b.pt = 0;
+        if(a === 'beams'){
+          b.phase = 'btell';
+          const lanes = 5, s1 = Math.floor(Math.random() * lanes), s2 = (s1 + 2 + Math.floor(Math.random() * 2)) % lanes;
+          b.beams = [];
+          for(let i = 0; i < lanes; i++) if(i !== s1 && i !== s2) b.beams.push(cx - w + (i + 0.5) * (2 * w / lanes));
+          bossSay('一斉照射や！'); sfx.tell();
+        } else if(a === 'nets'){
+          b.phase = 'nets'; b.netN = 0; b.netT = 0; bossSay('網、網、網ィ！');
+        } else {
+          b.phase = 'ltell'; b.lx = s.x; bossSay('往生せえ！'); sfx.tell();
+        }
+      }
+      break;
+    case 'btell':
+      if(b.pt >= 1.0){ b.phase = 'bfire'; b.pt = 0; b.beamHit = false; sfx.laser(); G.shake = Math.max(G.shake, 0.25); }
+      break;
+    case 'bfire':
+      if(!b.beamHit){
+        const hw = M.beamW / 2 + 2;
+        for(const bx of b.beams){
+          if(Math.abs(s.x - bx) < s.r + hw){
+            b.beamHit = true; b.hits++;
+            floatText('一斉照射 被弾', s.x, SY - 30, '#FF8FA3');
+            damage(1);
+            if(G.state === 'play') addPain(7, true);
+            break;
+          }
+        }
+      }
+      if(b.pt >= 0.4){ b.phase = 'idle'; b.pt = 0; b.beams = []; }
+      break;
+    case 'nets':
+      b.x += (s.x - b.x) * Math.min(1, dt * 2);
+      b.netT -= dt;
+      if(b.netT <= 0 && b.netN < BOSS_NETS[MODE]){ if(spawnBasketAt(s.x, true)){ b.netN++; b.netT = 0.6; } else b.netT = 0.2; }
+      if(b.netN >= BOSS_NETS[MODE] && b.pt > 2.4){ b.phase = 'idle'; b.pt = 0; }
+      break;
+    case 'ltell':
+      b.x += (b.lx - b.x) * Math.min(1, dt * 6);
+      if(b.pt >= 0.8){ b.phase = 'lunge'; b.pt = 0; }
+      break;
+    case 'lunge':
+      b.y = lerp(homeY, SY + 6, sstep(b.pt / 0.3));
+      if(b.pt >= 0.35){ b.phase = 'back'; b.pt = 0; }
+      break;
+    case 'back':
+      b.y = lerp(SY + 6, homeY, sstep(b.pt / 0.7));
+      if(b.pt >= 0.8){ b.phase = 'idle'; b.pt = 0; }
+      break;
+    case 'leave':
+      b.y += 280 * dt;
+      if(b.y > H + 220) b.phase = 'gone';
+      break;
+  }
+  if(b.phase !== 'enter' && b.phase !== 'leave' && b.hitCd <= 0 && Math.abs(s.x - b.x) < s.r + 28 && Math.abs(SY - b.y) < s.r + 34){
+    b.hitCd = 1; b.hits++;
+    s.tx += s.x < b.x ? -44 : 44;
+    floatText('主治医に小突かれた', s.x, SY - 30, '#CFE3F5');
+    damage(1);
+    if(G.state === 'play') addPain(14, true);
+  }
+}
+function drawBossHead(x, y, k, phase){
+  const angry = phase !== 'idle' && phase !== 'enter';
+  ctx.save(); ctx.translate(x, y); ctx.scale(k, k);
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  rr(-30, -34, 60, 70, 16); ctx.fillStyle = '#A9BCCF'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#1B2E45'; ctx.stroke();
+  ctx.save(); ctx.shadowColor = '#7FF3FF'; ctx.shadowBlur = 14;
+  ctx.fillStyle = phase === 'bfire' ? '#FF8FA3' : '#7FF3FF'; ctx.beginPath(); ctx.arc(0, -34, 9, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  ctx.lineWidth = 2; ctx.strokeStyle = '#1B2E45'; ctx.beginPath(); ctx.arc(0, -34, 9, 0, Math.PI * 2); ctx.stroke();
+  // 額帯鏡
+  ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-30, -18); ctx.lineTo(30, -18); ctx.stroke();
+  ctx.fillStyle = '#EEF3F8'; ctx.strokeStyle = '#1B2E45'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(-11, -18, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#1B2E45'; ctx.beginPath(); ctx.arc(-11, -18, 2.6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(-11, -18, 6.5, Math.PI * 1.1, Math.PI * 1.5); ctx.stroke();
+  // 眉・目
+  ctx.strokeStyle = '#1B2E45'; ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-22, angry ? -4 : -2); ctx.lineTo(-6, angry ? 2 : -1);
+  ctx.moveTo(22, angry ? -4 : -2); ctx.lineTo(6, angry ? 2 : -1);
+  ctx.stroke();
+  ctx.fillStyle = angry ? '#C0394F' : '#1B2E45';
+  ctx.beginPath(); ctx.arc(-12, 7, 3.6, 0, Math.PI * 2); ctx.arc(12, 7, 3.6, 0, Math.PI * 2); ctx.fill();
+  // 口
+  ctx.strokeStyle = '#1B2E45'; ctx.lineWidth = 2;
+  if(angry){
+    rr(-14, 15, 28, 11, 3); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.stroke();
+    ctx.lineWidth = 1.4; ctx.beginPath();
+    for(const tx of [-7, 0, 7]){ ctx.moveTo(tx, 15); ctx.lineTo(tx, 26); }
+    ctx.stroke();
+  } else {
+    ctx.beginPath(); ctx.moveTo(-10, 20); ctx.quadraticCurveTo(2, 15, 12, 18); ctx.stroke();
+  }
+  // 名札
+  rr(-14, 28, 28, 8, 2); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = '#1B2E45'; ctx.font = '800 6px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('主治医', 0, 34.5);
+  ctx.restore();
+}
+function drawBossCable(x, y, lh){
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#1B2E45'; ctx.lineWidth = 26;
+  ctx.beginPath(); ctx.moveTo(x + 14 * Math.sin(performance.now() / 900), lh + 60); ctx.quadraticCurveTo(x, (y + lh) / 2 + 40, x, y + 30); ctx.stroke();
+  ctx.strokeStyle = '#3E5E84'; ctx.lineWidth = 15;
+  ctx.beginPath(); ctx.moveTo(x + 14 * Math.sin(performance.now() / 900), lh + 60); ctx.quadraticCurveTo(x, (y + lh) / 2 + 40, x, y + 30); ctx.stroke();
+  ctx.lineCap = 'butt';
+}
+function drawBossBeams(beams, phase, pt, topY, bottomY){
+  const hw = M.beamW / 2 + 2;
+  for(const bx of beams){
+    if(phase === 'btell'){
+      const a = 0.35 + 0.45 * Math.abs(Math.sin(pt * 16));
+      ctx.fillStyle = 'rgba(255,45,85,' + (a * 0.3) + ')'; ctx.fillRect(bx - hw, topY, hw * 2, bottomY - topY);
+      ctx.strokeStyle = 'rgba(255,45,85,' + a + ')'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
+      ctx.beginPath(); ctx.moveTo(bx, bottomY); ctx.lineTo(bx, topY); ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      ctx.save(); ctx.shadowColor = '#FF2D55'; ctx.shadowBlur = 16; ctx.strokeStyle = '#FF2D55'; ctx.lineWidth = hw * 2;
+      ctx.beginPath(); ctx.moveTo(bx, bottomY); ctx.lineTo(bx, topY); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = Math.max(3, hw * 0.6);
+      ctx.beginPath(); ctx.moveTo(bx, bottomY); ctx.lineTo(bx, topY); ctx.stroke();
+    }
+  }
+}
+function drawBoss(){
+  const b = G.boss;
+  if(!b || b.phase === 'gone') return;
+  if(b.phase === 'btell' || b.phase === 'bfire') drawBossBeams(b.beams, b.phase, b.pt, -10, b.y - 40);
+  drawBossCable(b.x, b.y, H);
+  const jx = b.phase === 'bfire' || b.phase === 'lunge' ? (Math.random() * 2 - 1) * 2 : 0;
+  drawBossHead(b.x + jx, b.y, 1, b.phase);
+  if(b.phase === 'ltell'){
+    ctx.fillStyle = '#FF2D55'; ctx.font = '400 30px ' + DISPLAY; ctx.textAlign = 'center';
+    ctx.fillText('！', b.x + 44, b.y - 20);
+  }
+  if(b.lineT > 0 && b.line){
+    ctx.globalAlpha = Math.min(1, b.lineT / 0.3);
+    ctx.font = '400 15px ' + DISPLAY; ctx.textAlign = 'center';
+    const tx = clamp(b.x, 120, 240), ty = Math.min(b.y - 58, H - 30);
+    ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(27,46,69,0.95)'; ctx.strokeText(b.line, tx, ty);
+    ctx.fillStyle = b.phase === 'leave' ? '#CFE3F5' : '#FF4D6D'; ctx.fillText(b.line, tx, ty);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function pickup(type, x){
+  sfx.pick();
+  unlock('item_' + type);
+  if(type === 'water'){ G.waterT = 3; floatText('水分補給　加速！', x, SY - 26, '#9FE0FF'); }
+  if(type === 'pill'){ G.pain = Math.max(0, G.pain - M.pill); floatText('鎮痛剤　痛み −' + M.pill, x, SY - 26, '#FFD6E0'); }
+  if(type === 'relax'){ G.relaxT = 5; floatText('リラックス　管が広がる', x, SY - 26, '#B9F0C8'); }
+  if(type === 'buddy'){
+    const s = G.stone;
+    if(s.r >= 14){ floatText('仲間と合体…もう満タン', x, SY - 26, '#FBE3A0'); }
+    else { s.r = Math.min(14, s.r + M.grow); floatText('仲間と合体！石が育った', x, SY - 26, '#FBE3A0'); spark(s.x, SY, '#F4D27A', 12); G.shake = Math.max(G.shake, 0.12); }
+  }
+}
+
+function updScope(dt, stoneW){
+  const sc = G.scope, s = G.stone, hard = G.pain >= 60;
+  const noLaser = stoneW < 2 * s.r + M.laserW + 10, noLunge = stoneW < 2 * s.r + 22;
+  sc.hitCd = Math.max(0, sc.hitCd - dt);
+  let targetGap = 200 + 26 * Math.sin(G.t * 1.3);
+
+  if(sc.phase === 'idle'){
+    sc.lungeT -= dt; sc.laserT -= dt;
+    sc.x += (s.x - sc.x) * Math.min(1, dt * 2.2);
+    if(noLunge) sc.lungeT = Math.max(sc.lungeT, 0.8);
+    if(noLaser) sc.laserT = Math.max(sc.laserT, 0.8);
+    if(sc.lungeT <= 0){ sc.phase = 'ltell'; sc.pt = 0; sc.lx = s.x; sfx.tell(); }
+    else if(sc.laserT <= 0){ sc.phase = 'tell'; sc.pt = 0; sc.beamX = sc.x; sfx.tell(); unlock('laser'); }
+  } else if(sc.phase === 'tell'){
+    sc.pt += dt;
+    if(sc.pt >= 0.8){ sc.phase = 'fire'; sc.pt = 0; sc.beamHit = false; sfx.laser(); }
+  } else if(sc.phase === 'fire'){
+    sc.pt += dt;
+    if(!sc.beamHit && Math.abs(s.x - sc.beamX) < s.r + M.laserW){
+      sc.beamHit = true;
+      floatText('レーザー被弾', s.x, SY - 30, '#FF8FA3');
+      damage(1);
+      if(G.state === 'play') addPain(6, true);
+    }
+    if(sc.pt >= 0.3){ sc.phase = 'idle'; sc.laserT = hard ? M.laserCd[1] : M.laserCd[0]; }
+  } else if(sc.phase === 'ltell'){
+    sc.pt += dt;
+    sc.x += (sc.lx - sc.x) * Math.min(1, dt * 6);
+    if(sc.pt >= 0.7){ sc.phase = 'lunge'; sc.pt = 0; sc.gapStart = sc.gap; }
+  } else if(sc.phase === 'lunge'){
+    sc.pt += dt;
+    targetGap = lerp(sc.gapStart, -12, sstep(sc.pt / 0.35));
+    if(sc.pt >= 0.35){ sc.phase = 'back'; sc.pt = 0; }
+  } else if(sc.phase === 'back'){
+    sc.pt += dt;
+    if(sc.pt >= 0.8){ sc.phase = 'idle'; sc.lungeT = (hard ? 4.2 : 6.5) * M.lungeMul; }
+  }
+
+  if(sc.phase === 'lunge') sc.gap = targetGap;
+  else sc.gap += (targetGap - sc.gap) * Math.min(1, dt * (sc.phase === 'back' ? 2.5 : 1.8));
+
+  const [tcx, tw] = tube(s.d + sc.gap);
+  sc.x = clamp(sc.x, tcx - tw + 10, tcx + tw - 10);
+
+  if(sc.hitCd <= 0 && Math.hypot(s.x - sc.x, sc.gap) < s.r + 10){
+    sc.hitCd = 0.9;
+    s.tx += s.x < sc.x ? -30 : 30;
+    floatText('内視鏡に小突かれた', s.x, SY - 30, '#CFE3F5');
+    damage(0.5);
+    if(G.state === 'play') addPain(11, true);
+  }
+}
+
+/* ---------- 描画ヘルパー ---------- */
+const FONT = '"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif';
+const DISPLAY = '"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif';
+function rr(x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+function mixColor(a, b, t){
+  const pa = [parseInt(a.slice(1, 3), 16), parseInt(a.slice(3, 5), 16), parseInt(a.slice(5, 7), 16)];
+  const pb = [parseInt(b.slice(1, 3), 16), parseInt(b.slice(3, 5), 16), parseInt(b.slice(5, 7), 16)];
+  return 'rgb(' + pa.map((v, i) => Math.round(lerp(v, pb[i], t))).join(',') + ')';
+}
+
+/* ---------- 描画：世界 ---------- */
+function drawWorld(){
+  const s = G.stone;
+  const bg = ctx.createLinearGradient(0, 0, W, 0);
+  bg.addColorStop(0, '#551A29'); bg.addColorStop(0.5, '#7A2E3E'); bg.addColorStop(1, '#551A29');
+  ctx.fillStyle = bg; ctx.fillRect(-12, -12, W + 24, H + 24);
+
+  ctx.fillStyle = 'rgba(255,180,190,0.06)';
+  for(let i = 0; i < 26; i++){
+    const px = (i * 97.3) % W;
+    const py = (((i * 151.7 - s.d * 0.5) % (H + 60)) + H + 60) % (H + 60) - 30;
+    ctx.beginPath(); ctx.arc(px, py, 10 + (i % 5) * 5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 総腸骨動脈（尿管の後ろを横切る）
+  const ay = SY + (ILIAC_C - s.d);
+  if(ay > -60 && ay < H + 60){
+    const th = 24 + 9 * pulseNow();
+    ctx.fillStyle = '#B8303F'; ctx.fillRect(-12, ay - th / 2, W + 24, th);
+    ctx.fillStyle = 'rgba(255,160,170,0.35)'; ctx.fillRect(-12, ay - th / 2 + 3, W + 24, 4);
+    ctx.fillStyle = 'rgba(255,230,230,0.85)'; ctx.font = '800 10px ' + FONT; ctx.textAlign = 'left';
+    ctx.fillText('総腸骨動脈', 8, ay - th / 2 - 5);
+  }
+
+  const rows = [];
+  for(let y = -12; y <= H + 12; y += 6){ const d = s.d + (y - SY); const t = tube(d); rows.push([y, t[0], t[1]]); }
+
+  // 外壁
+  ctx.beginPath();
+  rows.forEach((r, i) => { const x = r[1] - r[2] - 13; i ? ctx.lineTo(x, r[0]) : ctx.moveTo(x, r[0]); });
+  for(let i = rows.length - 1; i >= 0; i--){ const r = rows[i]; ctx.lineTo(r[1] + r[2] + 13, r[0]); }
+  ctx.closePath(); ctx.fillStyle = '#E0786F'; ctx.fill();
+
+  // 内腔
+  ctx.beginPath();
+  rows.forEach((r, i) => { const x = r[1] - r[2]; i ? ctx.lineTo(x, r[0]) : ctx.moveTo(x, r[0]); });
+  for(let i = rows.length - 1; i >= 0; i--){ const r = rows[i]; ctx.lineTo(r[1] + r[2], r[0]); }
+  ctx.closePath(); ctx.fillStyle = '#FBE3A0'; ctx.fill();
+
+  // 内壁の縁
+  ctx.strokeStyle = '#B5475A'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); rows.forEach((r, i) => { const x = r[1] - r[2]; i ? ctx.lineTo(x, r[0]) : ctx.moveTo(x, r[0]); }); ctx.stroke();
+  ctx.beginPath(); rows.forEach((r, i) => { const x = r[1] + r[2]; i ? ctx.lineTo(x, r[0]) : ctx.moveTo(x, r[0]); }); ctx.stroke();
+
+  // 壁のひだ
+  ctx.strokeStyle = 'rgba(181,71,90,0.6)'; ctx.lineWidth = 1.5;
+  for(let k = Math.ceil((s.d - SY - 20) / 34); k * 34 < s.d + H - SY + 20; k++){
+    const d = k * 34, y = SY + (d - s.d), [cx, w] = tube(d);
+    ctx.beginPath();
+    ctx.moveTo(cx - w - 11, y - 5); ctx.quadraticCurveTo(cx - w - 2, y, cx - w - 11, y + 5);
+    ctx.moveTo(cx + w + 11, y - 5); ctx.quadraticCurveTo(cx + w + 2, y, cx + w + 11, y + 5);
+    ctx.stroke();
+  }
+
+  // 尿道括約筋
+  const gy = SY + (GATE_D - s.d);
+  if(gy > -40 && gy < H + 40){
+    const [gcx] = tube(GATE_D), gw = base(GATE_D)[1], k = gateK();
+    ctx.fillStyle = '#C2505E'; ctx.strokeStyle = '#7A2E3E'; ctx.lineWidth = 2;
+    for(const sd of [-1, 1]){
+      ctx.beginPath(); ctx.ellipse(gcx + sd * gw, gy, 8 + gw * 0.72 * k, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(255,230,230,0.9)'; ctx.font = '800 10px ' + FONT; ctx.textAlign = 'left';
+    ctx.fillText(k > 0.6 ? '括約筋（閉）' : '括約筋（開）', gcx + gw + 18, gy + 4);
+  }
+
+  // 蠕動の波
+  for(const wv of G.waves){
+    const y = SY + (wv.d - s.d); if(y < -60 || y > H + 60 || wv.d > URETER_END + 60) continue;
+    const [cx, w] = tube(wv.d);
+    const g = ctx.createLinearGradient(0, y - 26, 0, y + 26);
+    g.addColorStop(0, 'rgba(224,120,111,0)'); g.addColorStop(0.5, 'rgba(224,120,111,0.38)'); g.addColorStop(1, 'rgba(224,120,111,0)');
+    ctx.fillStyle = g; ctx.fillRect(cx - w, y - 26, w * 2, 52);
+    ctx.strokeStyle = 'rgba(181,71,90,0.55)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx - 10, y - 4); ctx.lineTo(cx, y + 4); ctx.lineTo(cx + 10, y - 4); ctx.stroke();
+  }
+
+  // 流れの泡
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for(const b of G.bubbles){
+    const y = SY + (b.d - s.d); if(y < -10 || y > H + 10) continue;
+    const [cx, w] = tube(b.d);
+    ctx.beginPath(); ctx.ellipse(cx + b.u * Math.max(0, w - 6), y, 1.6, 4.5 * b.k, 0, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 出口
+  const ey = SY + (END - s.d);
+  if(ey < H + 170){
+    const g = ctx.createRadialGradient(180, ey, 6, 180, ey, 170);
+    g.addColorStop(0, 'rgba(255,253,236,1)'); g.addColorStop(1, 'rgba(255,253,236,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, ey - 170, W, 340);
+    ctx.fillStyle = '#FFFDEC'; ctx.fillRect(-12, ey, W + 24, H + 24);
+    if(ey > 20 && ey < H){
+      ctx.fillStyle = '#7A2E3E'; ctx.font = '400 22px ' + DISPLAY; ctx.textAlign = 'center';
+      ctx.fillText('外尿道口', 180, ey + 38);
+    }
+  }
+
+  drawItems();
+  drawMobs();
+  drawShocks();
+  drawBaskets();
+  if(G.scope.on && !bossActive()) drawScope();
+  drawBoss();
+
+  // 結石
+  if(G.waterT > 0){
+    ctx.globalAlpha = 0.25;
+    drawStone(s.x, SY - 14, s.r, 0, 0);
+    ctx.globalAlpha = 0.12;
+    drawStone(s.x, SY - 28, s.r, 0, 0);
+    ctx.globalAlpha = 1;
+  }
+  drawStone(s.x, SY, s.r, s.vx, s.hitFx);
+
+  for(const p of G.parts){
+    ctx.globalAlpha = 1 - p.t / p.life; ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawStone(x, y, r, vx, hitFx, mode){
+  mode = mode || MODE;
+  ctx.save(); ctx.translate(x, y);
+  const look = clamp(vx / 300, -1, 1) * r * 0.12;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if(mode === 'hard'){
+    const n = 15;
+    ctx.beginPath();
+    for(let i = 0; i < n * 2; i++){
+      const a = i / (n * 2) * Math.PI * 2 - Math.PI / 2;
+      const k = i % 2 === 0 ? r * (1.34 + 0.1 * Math.sin(i * 1.7)) : r * 0.84;
+      const px = Math.cos(a) * k, py = Math.sin(a) * k;
+      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.closePath();
+    const g = ctx.createRadialGradient(-r * 0.3, -r * 0.4, 1, 0, 0, r * 1.35);
+    g.addColorStop(0, '#9A98A8'); g.addColorStop(1, '#2E2A36');
+    ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#120F16'; ctx.stroke();
+    // モヒカン
+    ctx.fillStyle = '#FF3B5C'; ctx.strokeStyle = '#120F16'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    for(let i = 0; i < 5; i++){
+      const bx = -r * 0.36 + i * r * 0.18;
+      ctx.moveTo(bx - r * 0.1, -r * 0.62); ctx.lineTo(bx + r * 0.02, -r * (1.28 + (i % 2) * 0.16)); ctx.lineTo(bx + r * 0.1, -r * 0.62);
+    }
+    ctx.fill(); ctx.stroke();
+    // サングラス
+    ctx.save(); ctx.rotate(hitFx > 0 ? 0.28 : -0.05);
+    ctx.fillStyle = '#0B090E';
+    rr(-r * 0.66 + look, -r * 0.32, r * 0.58, r * 0.32, r * 0.1); ctx.fill();
+    rr(r * 0.08 + look, -r * 0.32, r * 0.58, r * 0.32, r * 0.1); ctx.fill();
+    ctx.fillRect(-r * 0.12 + look, -r * 0.26, r * 0.24, r * 0.07);
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.fillRect(-r * 0.56 + look, -r * 0.27, r * 0.16, r * 0.05); ctx.fillRect(r * 0.18 + look, -r * 0.27, r * 0.16, r * 0.05);
+    ctx.restore();
+    // ニヤリ
+    ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = '#0B090E'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    if(hitFx > 0){ rr(-r * 0.36 + look, r * 0.18, r * 0.72, r * 0.26, r * 0.06); }
+    else { ctx.moveTo(-r * 0.4 + look, r * 0.16); ctx.quadraticCurveTo(look, r * 0.66, r * 0.42 + look, r * 0.1); ctx.closePath(); }
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    for(let i = 1; i < 4; i++){ const tx = -r * 0.36 + i * r * 0.18 + look; ctx.moveTo(tx, r * 0.18); ctx.lineTo(tx, r * 0.4); }
+    ctx.stroke();
+  } else {
+    const easy = mode === 'easy';
+    const n = easy ? 28 : 11, bump = easy ? 0.02 : 0.08;
+    ctx.beginPath();
+    for(let i = 0; i < n; i++){
+      const a = i / n * Math.PI * 2 + 0.2, k = r * (1 + bump * Math.sin(i * 2.7 + 1));
+      const px = Math.cos(a) * k, py = Math.sin(a) * k;
+      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.closePath();
+    const g = ctx.createRadialGradient(-r * 0.4, -r * 0.45, 1, 0, 0, r * 1.25);
+    g.addColorStop(0, easy ? '#FFF1BF' : '#F6D986'); g.addColorStop(1, easy ? '#D9A94A' : '#B57E2C');
+    ctx.fillStyle = g; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#5C3A12'; ctx.stroke();
+    if(!easy){
+      ctx.fillStyle = 'rgba(92,58,18,0.35)';
+      [[-0.5, 0.45], [0.45, 0.5], [0.1, 0.62], [0.62, -0.2]].forEach(p => { ctx.beginPath(); ctx.arc(p[0] * r, p[1] * r, r * 0.07, 0, Math.PI * 2); ctx.fill(); });
+    }
+    ctx.strokeStyle = '#2B1A1F'; ctx.fillStyle = '#2B1A1F'; ctx.lineWidth = Math.max(1.5, r * 0.13);
+    if(hitFx > 0){
+      const ex = r * 0.34, ey = -r * 0.1, e = r * 0.16;
+      ctx.beginPath();
+      ctx.moveTo(-ex - e + look, ey - e); ctx.lineTo(-ex + e * 0.6 + look, ey); ctx.lineTo(-ex - e + look, ey + e);
+      ctx.moveTo(ex + e + look, ey - e); ctx.lineTo(ex - e * 0.6 + look, ey); ctx.lineTo(ex + e + look, ey + e);
+      ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(look, r * 0.38, r * 0.12, r * 0.15, 0, 0, Math.PI * 2); ctx.fill();
+    } else if(easy){
+      for(const sx of [-1, 1]){
+        ctx.fillStyle = '#2B1A1F';
+        ctx.beginPath(); ctx.ellipse(sx * r * 0.32 + look, -r * 0.08, r * 0.15, r * 0.19, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(sx * r * 0.32 + look - r * 0.05, -r * 0.14, r * 0.06, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(240,106,138,0.45)';
+        ctx.beginPath(); ctx.arc(sx * r * 0.58 + look, r * 0.2, r * 0.13, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(look, r * 0.2, r * 0.2, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+    } else {
+      for(const sx of [-1, 1]){
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.ellipse(sx * r * 0.33 + look, -r * 0.12, r * 0.21, r * 0.26, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#2B1A1F';
+        ctx.beginPath(); ctx.arc(sx * r * 0.33 + look * 1.6, -r * 0.06, r * 0.11, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.beginPath(); ctx.moveTo(-r * 0.5 + look, -r * 0.48); ctx.lineTo(-r * 0.15 + look, -r * 0.38);
+      ctx.moveTo(r * 0.5 + look, -r * 0.48); ctx.lineTo(r * 0.15 + look, -r * 0.38); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-r * 0.15 + look, r * 0.38); ctx.lineTo(r * 0.15 + look, r * 0.38); ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawItems(){
+  const s = G.stone;
+  for(const it of G.items){
+    const y = SY + (it.d - s.d) + Math.sin(G.t * 3 + it.bob) * 2;
+    if(y < -20 || y > H + 20) continue;
+    const [cx, w] = tube(it.d), x = cx + it.u * Math.max(0, w - 16);
+    drawItemIcon(it.type, x, y);
+  }
+}
+function drawItemIcon(type, x, y){
+  {
+    const it = { type };
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#2B1A1F';
+    if(it.type === 'water'){
+      ctx.beginPath(); ctx.moveTo(0, -10); ctx.bezierCurveTo(7, -2, 8, 3, 8, 4); ctx.arc(0, 4, 8, 0, Math.PI); ctx.bezierCurveTo(-8, 3, -7, -2, 0, -10);
+      ctx.fillStyle = '#4DB6F0'; ctx.fill(); ctx.stroke();
+    } else if(it.type === 'pill'){
+      ctx.rotate(-0.6);
+      rr(-11, -5, 22, 10, 5); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.save(); ctx.clip(); ctx.fillStyle = '#F06A8A'; ctx.fillRect(0, -6, 12, 12); ctx.restore();
+      rr(-11, -5, 22, 10, 5); ctx.stroke();
+    } else if(it.type === 'buddy'){
+      const bob = Math.sin(performance.now() / 180) * 1.2;
+      drawStone(0, bob, 7.5, Math.sin(performance.now() / 400) * 200, 0, MODE === 'hard' ? 'hard' : 'easy');
+      ctx.font = '800 8px ' + FONT; ctx.textAlign = 'center';
+      ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(43,12,21,0.85)'; ctx.strokeText('合体しよ', 0, -15);
+      ctx.fillStyle = '#FFF6E6'; ctx.fillText('合体しよ', 0, -15);
+    } else {
+      ctx.beginPath(); ctx.arc(0, 0, 9, 0, Math.PI * 2); ctx.fillStyle = '#6CC58A'; ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#FFFFFF'; ctx.beginPath();
+      ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.moveTo(-5, 0); ctx.lineTo(-2, -3); ctx.moveTo(-5, 0); ctx.lineTo(-2, 3);
+      ctx.moveTo(5, 0); ctx.lineTo(2, -3); ctx.moveTo(5, 0); ctx.lineTo(2, 3); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function drawShocks(){
+  const s = G.stone;
+  for(const sw of G.shocks){
+    const y = SY + (sw.d - s.d);
+    if(!sw.done){
+      const p = sw.t / sw.dur, blink = p > 0.72 && Math.floor(sw.t * 12) % 2 === 0;
+      drawReticle(sw.x, y, sw.R, p, blink);
+    } else drawBoom(sw.x, y, sw.R, sw.bt / 0.5);
+  }
+}
+function drawBoom(x, y, R, k){
+  ctx.strokeStyle = 'rgba(255,255,255,' + (1 - k) + ')'; ctx.lineWidth = 7 * (1 - k) + 1;
+  ctx.beginPath(); ctx.arc(x, y, R * (1 + k * 1.6), 0, Math.PI * 2); ctx.stroke();
+}
+function drawReticle(x0, y, R, p, blink){
+  const sw = { x: x0, R };
+  {
+      ctx.fillStyle = 'rgba(127,209,255,' + (0.1 + 0.22 * p) + ')';
+      ctx.beginPath(); ctx.arc(sw.x, y, sw.R, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = blink ? '#FFFFFF' : '#3FA9E0'; ctx.lineWidth = 2.5;
+      ctx.setLineDash([6, 5]); ctx.beginPath(); ctx.arc(sw.x, y, sw.R + (1 - p) * 34, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(sw.x, y, sw.R, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sw.x - sw.R - 6, y); ctx.lineTo(sw.x - 6, y); ctx.moveTo(sw.x + 6, y); ctx.lineTo(sw.x + sw.R + 6, y);
+      ctx.moveTo(sw.x, y - sw.R - 6); ctx.lineTo(sw.x, y - 6); ctx.moveTo(sw.x, y + 6); ctx.lineTo(sw.x, y + sw.R + 6); ctx.stroke();
+  }
+}
+
+function drawBaskets(){
+  const s = G.stone;
+  for(const b of G.baskets){
+    let y = SY + (b.d - s.d), rad;
+    const warn = b.state === 'open' && b.t / b.dur > 0.7;
+    if(b.state === 'open') rad = b.R * sstep(b.t / 0.45);
+    else { rad = Math.max(2, b.R * (1 - sstep(b.ct / 0.15))); y += b.ct * 260; }
+    ctx.strokeStyle = '#243B55'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(b.x, y + rad); ctx.quadraticCurveTo(b.x + 20, (y + H) / 2, b.x - 10, H + 20); ctx.stroke();
+    drawNet(b.x, y, rad, warn, G.t);
+  }
+}
+function drawNet(x, y, rad, warn, t){
+  ctx.fillStyle = warn ? 'rgba(255,77,109,0.18)' : 'rgba(207,227,245,0.14)';
+  ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = warn ? '#FF4D6D' : '#DDE7F0'; ctx.lineWidth = 2;
+  for(let i = 0; i < 5; i++){
+    const a = i / 5 * Math.PI + t * 1.5;
+    ctx.beginPath(); ctx.ellipse(x, y, Math.abs(Math.cos(a)) * rad + 0.5, rad, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.stroke();
+}
+
+function drawScope(){
+  const sc = G.scope, tipY = SY + sc.gap, hw = M.beamW / 2;
+  if(sc.phase === 'tell'){
+    const a = 0.35 + 0.45 * Math.abs(Math.sin(sc.pt * 18));
+    ctx.fillStyle = 'rgba(255,45,85,' + (a * 0.28) + ')';
+    ctx.fillRect(sc.beamX - hw, -10, hw * 2, tipY);
+    ctx.strokeStyle = 'rgba(255,45,85,' + a + ')'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
+    ctx.beginPath(); ctx.moveTo(sc.beamX, tipY - 8); ctx.lineTo(sc.beamX, -10); ctx.stroke(); ctx.setLineDash([]);
+  } else if(sc.phase === 'fire'){
+    ctx.save(); ctx.shadowColor = '#FF2D55'; ctx.shadowBlur = 18;
+    ctx.strokeStyle = '#FF2D55'; ctx.lineWidth = M.beamW;
+    ctx.beginPath(); ctx.moveTo(sc.beamX, tipY - 8); ctx.lineTo(sc.beamX, -10); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = Math.max(3, M.beamW * 0.3);
+    ctx.beginPath(); ctx.moveTo(sc.beamX, tipY - 8); ctx.lineTo(sc.beamX, -10); ctx.stroke();
+  }
+  if(tipY > H + 40) return;
+  const baseX = sc.x + 18 * Math.sin(G.t * 0.9);
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#1B2E45'; ctx.lineWidth = 13;
+  ctx.beginPath(); ctx.moveTo(baseX, H + 40); ctx.quadraticCurveTo(sc.x, (tipY + H) / 2 + 40, sc.x, tipY + 22); ctx.stroke();
+  ctx.strokeStyle = '#3E5E84'; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(baseX, H + 40); ctx.quadraticCurveTo(sc.x, (tipY + H) / 2 + 40, sc.x, tipY + 22); ctx.stroke();
+
+  drawScopeHead(sc.x, tipY, sc.phase, sc.x > 200);
+  ctx.lineCap = 'butt';
+}
+function drawScopeHead(sx, tipY, phase, textLeft){
+  // 頭（オラついた顔つき）
+  const angry = phase === 'tell' || phase === 'fire' || phase === 'ltell' || phase === 'lunge';
+  const jx = phase === 'fire' || phase === 'lunge' ? (Math.random() * 2 - 1) * 1.5 : 0;
+  const hx = sx + jx;
+  rr(hx - 14, tipY - 6, 28, 32, 9); ctx.fillStyle = '#A9BCCF'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#1B2E45'; ctx.stroke();
+  ctx.save(); ctx.shadowColor = '#7FF3FF'; ctx.shadowBlur = 10;
+  ctx.fillStyle = phase === 'fire' ? '#FF8FA3' : '#7FF3FF'; ctx.beginPath(); ctx.arc(hx, tipY - 1, 5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  ctx.strokeStyle = '#1B2E45'; ctx.fillStyle = '#1B2E45'; ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(hx - 10, tipY + 6 - (angry ? 0 : 2)); ctx.lineTo(hx - 3, tipY + 9);
+  ctx.moveTo(hx + 10, tipY + 6 - (angry ? 0 : 2)); ctx.lineTo(hx + 3, tipY + 9);
+  ctx.stroke();
+  ctx.beginPath(); ctx.arc(hx - 6, tipY + 12, 1.8, 0, Math.PI * 2); ctx.arc(hx + 6, tipY + 12, 1.8, 0, Math.PI * 2); ctx.fill();
+  if(angry){
+    rr(hx - 8, tipY + 16, 16, 7, 2); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hx - 3, tipY + 16); ctx.lineTo(hx - 3, tipY + 23); ctx.moveTo(hx + 2, tipY + 16); ctx.lineTo(hx + 2, tipY + 23); ctx.lineWidth = 1.2; ctx.stroke();
+  } else {
+    ctx.beginPath(); ctx.moveTo(hx - 6, tipY + 20); ctx.quadraticCurveTo(hx, tipY + 17, hx + 7, tipY + 19); ctx.stroke();
+  }
+
+  // セリフ
+  let line = null;
+  if(phase === 'tell') line = 'ロックオンや';
+  else if(phase === 'fire') line = 'オラオラァ！';
+  else if(phase === 'ltell') line = 'ドツいたろか';
+  else if(phase === 'lunge') line = 'オラァ！';
+  if(line){
+    ctx.font = (phase === 'fire' || phase === 'lunge' ? '400 17px ' : '800 12px ') + (phase === 'fire' || phase === 'lunge' ? DISPLAY : FONT);
+    ctx.textAlign = textLeft ? 'right' : 'left';
+    const tx = textLeft ? hx - 20 : hx + 20, ty = tipY + 8 + (Math.random() * 2 - 1) * (phase === 'fire' ? 1.5 : 0);
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(27,46,69,0.95)'; ctx.strokeText(line, tx, ty);
+    ctx.fillStyle = phase === 'tell' || phase === 'ltell' ? '#FFD1DA' : '#FF4D6D'; ctx.fillText(line, tx, ty);
+  }
+  ctx.lineCap = 'butt';
+}
+
+/* ---------- 描画：HUD ---------- */
+function drawHost(x, y, r, pain, mode){
+  mode = mode || MODE;
+  const lvl = pain >= 90 ? 3 : pain >= 60 ? 2 : pain >= 30 ? 1 : 0;
+  if(lvl >= 3 || (mode === 'hard' && lvl >= 2)) x += (Math.random() * 2 - 1) * 1.6;
+  const rx = mode === 'hard' ? r * 0.8 : mode === 'easy' ? r * 1.04 : r * 0.92, ry = mode === 'hard' ? r * 1.02 : r * 0.98;
+  const skin0 = mode === 'hard' ? '#EEDDD4' : mode === 'easy' ? '#F2C293' : '#EEC49E';
+  const skin = mode === 'hard' ? mixColor(skin0, '#B9CBE3', pain / 100) : mixColor(skin0, '#EE8672', pain / 100);
+  const hair = mode === 'easy' ? '#3B3330' : mode === 'hard' ? '#4A4442' : '#2A2322';
+  const gray = mode === 'hard' ? '#A8A29E' : '#8F8883';
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  // 耳
+  ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 2; ctx.fillStyle = skin;
+  for(const sd of [-1, 1]){ ctx.beginPath(); ctx.ellipse(x + sd * rx * 0.97, y + ry * 0.08, r * 0.15, r * 0.21, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+  // 後ろ髪（ボリューム）
+  ctx.fillStyle = hair;
+  ctx.beginPath(); ctx.ellipse(x, y - ry * 0.06, rx * 1.07, ry * 1.04, 0, Math.PI, Math.PI * 2); ctx.fill();
+  // 顔
+  ctx.fillStyle = skin;
+  ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+  // 前髪（顔の中にクリップ）
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(x, y, rx + 1, ry + 1, 0, 0, Math.PI * 2); ctx.clip();
+  ctx.fillStyle = hair;
+  ctx.beginPath();
+  ctx.moveTo(x - rx - 3, y - ry * 0.02);
+  ctx.lineTo(x - rx - 3, y - ry - 3); ctx.lineTo(x + rx + 3, y - ry - 3); ctx.lineTo(x + rx + 3, y - ry * 0.02);
+  if(mode === 'easy'){
+    // ちょっとボサっとした前髪
+    ctx.lineTo(x + rx * 0.82, y - ry * 0.28);
+    const pts = [0.6, 0.3, 0.0, -0.3, -0.6];
+    pts.forEach((px, i) => { ctx.quadraticCurveTo(x + (px + 0.15) * rx, y - ry * (0.3 + (i % 2) * 0.12), x + px * rx, y - ry * 0.42); });
+    ctx.lineTo(x - rx * 0.85, y - ry * 0.26);
+  } else if(mode === 'hard'){
+    // きっちり七三
+    ctx.lineTo(x + rx * 0.86, y - ry * 0.34);
+    ctx.quadraticCurveTo(x + rx * 0.2, y - ry * 0.5, x - rx * 0.35, y - ry * 0.72);
+    ctx.lineTo(x - rx * 0.85, y - ry * 0.3);
+  } else {
+    // ふつうの短髪（横分け）
+    ctx.lineTo(x + rx * 0.84, y - ry * 0.3);
+    ctx.quadraticCurveTo(x + rx * 0.3, y - ry * 0.36, x - rx * 0.1, y - ry * 0.56);
+    ctx.quadraticCurveTo(x - rx * 0.5, y - ry * 0.42, x - rx * 0.86, y - ry * 0.28);
+  }
+  ctx.closePath(); ctx.fill();
+  // もみあげの白髪
+  ctx.fillStyle = gray;
+  for(const sd of [-1, 1]){ ctx.beginPath(); ctx.ellipse(x + sd * rx * 0.93, y - ry * 0.12, rx * 0.1, ry * 0.18, 0, 0, Math.PI * 2); ctx.fill(); }
+  // 分け目・毛流れ
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x - rx * 0.3, y - ry * 0.95); ctx.quadraticCurveTo(x - rx * 0.1, y - ry * 0.7, x + rx * 0.4, y - ry * 0.55); ctx.stroke();
+  ctx.restore();
+  ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+
+  const ex = rx * 0.38, ey = y + ry * 0.02;
+  ctx.strokeStyle = '#2B1A1F'; ctx.fillStyle = '#2B1A1F';
+  // 眉
+  ctx.lineWidth = mode === 'easy' ? 2.6 : mode === 'hard' ? 1.2 : 2;
+  const worried = mode === 'hard' || lvl >= 1;
+  ctx.beginPath();
+  for(const sd of [-1, 1]){
+    const inner = x + sd * ex - sd * 5, outer = x + sd * ex + sd * 5;
+    if(worried){ ctx.moveTo(inner, ey - 10); ctx.lineTo(outer, ey - 6.5); }
+    else { ctx.moveTo(inner, ey - 8); ctx.quadraticCurveTo(x + sd * ex, ey - 10, outer, ey - 8); }
+  }
+  ctx.stroke();
+  // 目
+  ctx.lineWidth = 2;
+  const e = 3.4;
+  ctx.beginPath();
+  for(const sd of [-1, 1]){
+    const bx = x + sd * ex;
+    if(lvl === 0){
+      if(mode === 'easy'){ ctx.moveTo(bx - 3.5, ey + 1); ctx.quadraticCurveTo(bx, ey - 3, bx + 3.5, ey + 1); }
+      else { ctx.moveTo(bx + 1.8, ey); ctx.arc(bx, ey, 1.8, 0, Math.PI * 2); }
+    } else if(lvl === 1){ ctx.moveTo(bx - 3, ey); ctx.lineTo(bx + 3, ey); }
+    else if(lvl === 2){ ctx.moveTo(bx - sd * e, ey - e); ctx.lineTo(bx + sd * e, ey); ctx.lineTo(bx - sd * e, ey + e); }
+    else { ctx.moveTo(bx - e, ey - e); ctx.lineTo(bx + e, ey + e); ctx.moveTo(bx + e, ey - e); ctx.lineTo(bx - e, ey + e); }
+  }
+  if(lvl === 0 && mode !== 'easy') ctx.fill(); else ctx.stroke();
+  // メガネ
+  if(mode === 'hard'){
+    ctx.lineWidth = 1.3; ctx.fillStyle = 'rgba(200,230,255,0.25)';
+    for(const sd of [-1, 1]){ ctx.beginPath(); ctx.arc(x + sd * ex, ey, rx * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(x - ex + rx * 0.25, ey); ctx.lineTo(x + ex - rx * 0.25, ey); ctx.stroke();
+  }
+  // ほうれい線（おっさんらしさ）
+  ctx.strokeStyle = 'rgba(90,50,40,0.45)'; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(x - rx * 0.32, y + ry * 0.2); ctx.quadraticCurveTo(x - rx * 0.42, y + ry * 0.38, x - rx * 0.34, y + ry * 0.54);
+  ctx.moveTo(x + rx * 0.32, y + ry * 0.2); ctx.quadraticCurveTo(x + rx * 0.42, y + ry * 0.38, x + rx * 0.34, y + ry * 0.54);
+  ctx.stroke();
+  // 鼻
+  ctx.strokeStyle = 'rgba(90,50,40,0.6)'; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(x - 1.5, y + ry * 0.22); ctx.quadraticCurveTo(x + 2.5, y + ry * 0.24, x + 1.5, y + ry * 0.3); ctx.stroke();
+  // ほっぺ
+  if(mode === 'easy' && lvl < 2){
+    ctx.fillStyle = 'rgba(240,106,138,0.35)';
+    for(const sd of [-1, 1]){ ctx.beginPath(); ctx.arc(x + sd * rx * 0.62, y + ry * 0.3, 3.5, 0, Math.PI * 2); ctx.fill(); }
+  }
+  // 口
+  const mo = y + ry * 0.48;
+  ctx.strokeStyle = '#2B1A1F'; ctx.fillStyle = '#2B1A1F'; ctx.lineWidth = 2;
+  if(lvl === 0){
+    if(mode === 'hard'){ ctx.beginPath(); ctx.moveTo(x - 4.5, mo); ctx.quadraticCurveTo(x - 2.2, mo - 2, x, mo); ctx.quadraticCurveTo(x + 2.2, mo + 2, x + 4.5, mo); ctx.stroke(); }
+    else { ctx.beginPath(); ctx.arc(x, mo - 3, mode === 'easy' ? 5.5 : 4, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke(); }
+  } else if(lvl === 1){
+    ctx.beginPath(); ctx.moveTo(x - 5, mo); ctx.quadraticCurveTo(x - 2.5, mo - 2.5, x, mo); ctx.quadraticCurveTo(x + 2.5, mo + 2.5, x + 5, mo); ctx.stroke();
+  } else {
+    const mh = lvl === 2 ? 4 : 7;
+    rr(x - 5, mo - 2, 10, mh, 2); ctx.fill();
+  }
+  // 汗・涙
+  if(mode === 'hard' || lvl >= 2){
+    ctx.fillStyle = '#6FC3F0';
+    const sx = x + rx * 0.8, sy = y - ry * 0.12;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(sx + 4, sy + 7, sx, sy + 8); ctx.quadraticCurveTo(sx - 4, sy + 7, sx, sy); ctx.fill();
+  }
+  if(lvl === 3 || (mode === 'hard' && lvl >= 2)){
+    ctx.strokeStyle = '#6FC3F0'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x - ex, ey + 5); ctx.lineTo(x - ex, ey + 12); ctx.moveTo(x + ex, ey + 5); ctx.lineTo(x + ex, ey + 12); ctx.stroke();
+  }
+  ctx.lineCap = 'butt'; ctx.lineJoin = 'miter';
+}
+
+function drawHUD(){
+  const s = G.stone;
+  rr(8, 8, W - 16, 64, 14); ctx.fillStyle = 'rgba(43,12,21,0.78)'; ctx.fill();
+  drawHost(40, 40, 24, G.pain);
+
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.font = '800 11px ' + FONT; ctx.fillStyle = '#FFE9D6';
+  ctx.fillText('宿主の痛み', 74, 24);
+  const lvl = G.pain >= 90 ? 3 : G.pain >= 60 ? 2 : G.pain >= 30 ? 1 : 0;
+  rr(74, 29, 196, 12, 6); ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill();
+  if(G.pain > 0.5){ rr(74, 29, Math.max(12, 196 * G.pain / 100), 12, 6); ctx.fillStyle = ['#7ED6A5', '#F2C94C', '#F2994A', '#FF4D6D'][lvl]; ctx.fill(); }
+  ctx.fillStyle = 'rgba(43,12,21,0.6)';
+  [30, 60, 90].forEach(v => ctx.fillRect(74 + 196 * v / 100 - 1, 29, 2, 12));
+  ctx.fillStyle = '#FFE9D6'; ctx.font = '800 12px ' + FONT;
+  ctx.fillText(Math.round(G.pain) + '%', 276, 40);
+
+  ctx.font = '800 11px ' + FONT; ctx.fillStyle = '#FFE9D6';
+  ctx.fillText('石の大きさ', 74, 60);
+  rr(136, 52, 134, 8, 4); ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill();
+  const sr = clamp((s.r - 6) / 8, 0, 1);
+  if(sr > 0.02){ rr(136, 52, Math.max(8, 134 * sr), 8, 4); ctx.fillStyle = sr < 0.3 ? '#FF8FA3' : '#E9B24C'; ctx.fill(); }
+
+  // 一時停止
+  ctx.fillStyle = 'rgba(255,255,255,0.14)';
+  ctx.beginPath(); ctx.arc(PAUSE_BTN.x, PAUSE_BTN.y, PAUSE_BTN.r, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#FFF6E6'; ctx.fillRect(PAUSE_BTN.x - 6, PAUSE_BTN.y - 7, 4, 14); ctx.fillRect(PAUSE_BTN.x + 2, PAUSE_BTN.y - 7, 4, 14);
+
+  // 進捗レール
+  const top = 96, bot = 540, rx = 350;
+  ctx.strokeStyle = 'rgba(255,246,230,0.35)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(rx, top); ctx.lineTo(rx, bot); ctx.stroke(); ctx.lineCap = 'butt';
+  ctx.font = '800 9px ' + FONT; ctx.textAlign = 'right';
+  [[0, '腎臓'], [SEC('upj').start, '尿管'], [BLADDER.start, '膀胱'], [SEC('prost').start, '尿道'], [END, '出口']].forEach(m => {
+    const yy = top + (bot - top) * m[0] / END;
+    ctx.fillStyle = '#FFF6E6'; ctx.beginPath(); ctx.arc(rx, yy, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,246,230,0.8)'; ctx.fillText(m[1], rx - 6, yy + 3);
+  });
+  const py = top + (bot - top) * clamp(s.d / END, 0, 1);
+  ctx.fillStyle = '#E9B24C'; ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(rx, py, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+  // 豆知識トースト
+  if(G.toast && G.state === 'play'){
+    G.toast.t += 1 / 60;
+    const a = clamp(Math.min(G.toast.t / 0.2, (2.6 - G.toast.t) / 0.4), 0, 1);
+    if(G.toast.t > 2.6) G.toast = null;
+    else {
+      ctx.globalAlpha = a; ctx.font = '800 11px ' + FONT; ctx.textAlign = 'left';
+      const tw = ctx.measureText(G.toast.text).width + 26;
+      rr(12, 566, tw, 24, 12); ctx.fillStyle = 'rgba(46,156,148,0.95)'; ctx.fill();
+      ctx.fillStyle = '#FFF6E6'; ctx.fillText('◆ ' + G.toast.text, 20, 582);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // 現在地
+  if(G.state === 'play'){
+    const here = '現在地　' + SECTIONS[secIndex(s.d)].name;
+    ctx.font = '800 11px ' + FONT; ctx.textAlign = 'left';
+    const lw = ctx.measureText(here).width + 20;
+    rr(12, 596, lw, 24, 12); ctx.fillStyle = 'rgba(43,12,21,0.75)'; ctx.fill();
+    ctx.fillStyle = '#FFF6E6'; ctx.fillText(here, 22, 612);
+  }
+
+  // 膀胱の尿意
+  if(SECTIONS[secIndex(s.d)] === BLADDER && G.state === 'play'){
+    const u = clamp((s.d - BLADDER.start) / BLADDER.len, 0, 1);
+    ctx.textAlign = 'left'; ctx.font = '800 11px ' + FONT;
+    rr(14, 80, 116, 22, 11); ctx.fillStyle = 'rgba(43,12,21,0.7)'; ctx.fill();
+    ctx.fillStyle = '#FBE3A0'; ctx.fillText('尿意 ' + Math.round(u * 100) + '%', 24, 95);
+  }
+
+  // 宿主のセリフ
+  if(G.say){
+    ctx.font = '800 13px ' + FONT; ctx.textAlign = 'left';
+    const tw = ctx.measureText(G.say.text).width + 18;
+    ctx.globalAlpha = G.say.t > 0.85 ? (1.1 - G.say.t) / 0.25 : 1;
+    rr(14, 78, tw, 26, 10); ctx.fillStyle = '#FFF6E6'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(30, 78); ctx.lineTo(36, 70); ctx.lineTo(42, 78); ctx.fill();
+    ctx.fillStyle = '#2B1A1F'; ctx.fillText(G.say.text, 23, 96);
+    ctx.globalAlpha = 1;
+  }
+
+  // 浮き文字
+  ctx.textAlign = 'center'; ctx.font = '800 13px ' + FONT;
+  for(const f of G.floats){
+    ctx.globalAlpha = 1 - f.t / 1.1;
+    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(43,12,21,0.9)'; ctx.strokeText(f.text, f.x, f.y);
+    ctx.fillStyle = f.color; ctx.fillText(f.text, f.x, f.y);
+  }
+  ctx.globalAlpha = 1;
+
+  // バナー
+  if(G.banners.length && G.state === 'play'){
+    const b = G.banners[0];
+    const a = Math.min(1, b.t / 0.2, (b.dur - b.t) / 0.3);
+    ctx.globalAlpha = clamp(a, 0, 1);
+    rr(30, 112, 300, 54, 14); ctx.fillStyle = 'rgba(255,246,230,0.95)'; ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = '#2B1A1F'; ctx.stroke();
+    ctx.fillStyle = '#2B1A1F'; ctx.textAlign = 'center';
+    ctx.font = '400 17px ' + DISPLAY; ctx.fillText(b.title, 180, 136);
+    ctx.font = '800 11px ' + FONT; ctx.fillStyle = '#6B4A50'; ctx.fillText(b.sub, 180, 155);
+    ctx.globalAlpha = 1;
+  }
+
+  // 操作ヒント
+  if(G.t < 4 && G.state === 'play'){
+    ctx.globalAlpha = clamp(4 - G.t, 0, 1) * 0.9;
+    ctx.fillStyle = '#FFF6E6'; ctx.font = '800 13px ' + FONT; ctx.textAlign = 'center';
+    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(43,12,21,0.9)';
+    ctx.strokeText('← 左右にドラッグで移動 →', 160, 520); ctx.fillText('← 左右にドラッグで移動 →', 160, 520);
+    ctx.globalAlpha = 1;
+  }
+
+  // 踏ん張るボタン
+  const fb = FUN_BTN;
+  ctx.fillStyle = G.fun ? 'rgba(46,156,148,0.92)' : 'rgba(43,12,21,0.72)';
+  ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r, 0, Math.PI * 2); ctx.fill();
+  ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r - 4, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeStyle = G.stamina < 25 ? '#FF8FA3' : '#E9B24C';
+  ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r - 4, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * G.stamina / 100); ctx.stroke();
+  ctx.fillStyle = '#FFF6E6'; ctx.font = '800 12px ' + FONT; ctx.textAlign = 'center';
+  ctx.fillText('踏ん張る', fb.x, fb.y + 4);
+
+  // 終了演出
+  if(G.state === 'over'){
+    ctx.fillStyle = 'rgba(120,10,30,' + Math.min(0.55, G.endT) + ')'; ctx.fillRect(0, 0, W, H);
+    const txt = { pain: '救急搬送', basket: '回収された', crush: '粉砕された' }[G.reason] || '';
+    ctx.font = '400 38px ' + DISPLAY; ctx.textAlign = 'center';
+    ctx.lineWidth = 7; ctx.strokeStyle = '#2B1A1F'; ctx.strokeText(txt, 180, 330);
+    ctx.fillStyle = '#FFF6E6'; ctx.fillText(txt, 180, 330);
+  }
+  if(G.state === 'win'){
+    ctx.fillStyle = 'rgba(255,253,236,' + Math.min(0.9, G.endT * 0.8) + ')'; ctx.fillRect(0, 0, W, H);
+    ctx.font = '400 36px ' + DISPLAY; ctx.textAlign = 'center';
+    ctx.fillStyle = '#7A2E3E'; ctx.fillText('ポロッ', 180, 330);
+  }
+}
+
+function draw(){
+  ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+  if(!G) return;
+  ctx.save();
+  if(G.shake > 0){ ctx.translate((Math.random() * 2 - 1) * 7 * G.shake, (Math.random() * 2 - 1) * 7 * G.shake); }
+  drawWorld();
+  ctx.restore();
+  if(G.state !== 'demo') drawHUD();
+}
+
+/* ---------- 画面遷移 ---------- */
+const $ = id => document.getElementById(id);
+const elTitle = $('title'), elPause = $('pause'), elResult = $('result');
+
+function showBest(){
+  const b = store.get('best_' + MODE, 0);
+  $('tBest').textContent = b > 0 ? M.label + ' の自己ベスト ' + b.toLocaleString() + '点' : '';
+}
+function setMode(m){
+  if(!MODES[m]) return;
+  MODE = m; M = MODES[m]; store.set('mode', m);
+  document.querySelectorAll('#title .mode').forEach(b => b.setAttribute('aria-checked', b.dataset.mode === m ? 'true' : 'false'));
+  $('mdesc').innerHTML = '';
+  const bold = document.createElement('b'); bold.textContent = M.stone + ' × ' + M.host;
+  $('mdesc').append(bold, document.createTextNode(M.desc));
+  showBest();
+}
+document.querySelectorAll('#title .mode').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+function drawPreview(){
+  if(elTitle.hidden) return;
+  const saved = ctx; ctx = pctx;
+  pctx.setTransform(pcv.width / 200, 0, 0, pcv.height / 68, 0, 0);
+  pctx.clearRect(0, 0, 200, 68);
+  const t = performance.now() / 1000;
+  drawHost(46, 34, 26, MODE === 'hard' ? 35 : 0, MODE);
+  pctx.fillStyle = '#FFF6E6'; pctx.font = '400 20px ' + DISPLAY; pctx.textAlign = 'center'; pctx.fillText('×', 100, 42);
+  drawStone(152, 36 + Math.sin(t * 3) * 2, 19, Math.sin(t) * 200, 0, MODE);
+  ctx = saved;
+}
+function startGame(){
+  ac();
+  funPointer = null; dragPointer = null;
+  elTitle.hidden = true; elPause.hidden = true; elResult.hidden = true;
+  newGame('play');
+}
+function toTitle(){
+  elPause.hidden = true; elResult.hidden = true; elTitle.hidden = false;
+  newGame('demo'); showBest();
+}
+function pauseGame(){
+  if(!G || G.state !== 'play') return;
+  G.state = 'pause'; funPointer = null; dragPointer = null;
+  $('optSound').checked = settings.sound; $('optVib').checked = settings.vib;
+  elPause.hidden = false;
+  $('bResume').focus();
+}
+function resumeGame(){ elPause.hidden = true; if(G && G.state === 'pause') G.state = 'play'; }
+
+let lastShare = '';
+function finish(win){
+  const s = G.stone, sizeRatio = clamp((s.r - 6) / 8, 0, 1), prog = clamp(s.d / END, 0, 1);
+  const rows = [];
+  let score, kind, title, sub, host;
+  if(win){
+    const sizeB = Math.round(sizeRatio * 2000);
+    const timeB = Math.max(0, Math.round((190 - G.t) * 15));
+    const painP = Math.round(G.totalPain * 4);
+    const bossB = G.bossBonus || 0;
+    score = Math.max(100, 3000 + sizeB + timeB - painP + bossB);
+    rows.push(['クリア', '+3,000'], [(sizeRatio >= 0.75 ? '大物排石ボーナス' : '石の大きさボーナス') + '（' + Math.round(sizeRatio * 100) + '%）', '+' + sizeB.toLocaleString()],
+      ['タイム（' + G.t.toFixed(1) + '秒）', '+' + timeB.toLocaleString()], ['宿主に与えた痛み（' + Math.round(G.totalPain) + '）', '−' + painP.toLocaleString()]);
+    if(bossB) rows.push([bossB >= 1000 ? 'ボス撃退ボーナス（ノーダメ）' : 'ボス撃退ボーナス', '+' + bossB.toLocaleString()]);
+    kind = '成功'; title = '自然排石 成功！'; sub = '手術を回避して、自力で外に出た。';
+    host = MODE === 'hard'
+      ? (G.totalPain < 120 ? '…出た？…出たんやな…（ハンカチで涙を拭う）' : 'う、生まれた…いや違う、出た…（気絶）')
+      : G.totalPain < 60 ? 'え、今出た？全然気づかんかった。' : G.totalPain < 200 ? '…出た。ちょっと痛かったけど。' : '出た…生きてる…もう二度とごめんや…';
+  } else {
+    score = Math.round(prog * 1500);
+    rows.push(['到達度', Math.round(prog * 100) + '%'], ['タイム', G.t.toFixed(1) + '秒'], ['宿主に与えた痛み', String(Math.round(G.totalPain))]);
+    kind = '失敗';
+    if(G.reason === 'pain'){ title = '救急搬送'; sub = '痛みが限界を超え、緊急手術が決まった。'; host = '救急車呼んでー！'; }
+    else if(G.reason === 'basket'){ title = '回収された'; sub = 'バスケットカテーテルに包まれて体の外へ。'; host = '先生ありがとう。石は記念に持って帰ります。'; }
+    else { title = '粉砕された'; sub = '砂になって排出された。自然排石…ではある。'; host = 'なんかザラっとした。'; }
+  }
+  const raw = score;
+  score = Math.round(raw * M.scoreMul);
+  rows.push(['難易度 ' + M.label, '×' + M.scoreMul.toFixed(1)]);
+  const best = store.get('best_' + MODE, 0), isBest = score > best;
+  if(isBest) store.set('best_' + MODE, score);
+
+  $('rKind').textContent = kind;
+  $('rKind').className = 'kind' + (win ? '' : ' fail');
+  $('rTitle').textContent = title;
+  $('rSub').textContent = sub;
+  $('rHost').textContent = host;
+  $('rRows').innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    const a = document.createElement('td'); a.textContent = r[0];
+    const b = document.createElement('td'); b.textContent = r[1];
+    tr.append(a, b); $('rRows').append(tr);
+  });
+  $('rScore').textContent = score.toLocaleString();
+  $('rBest').textContent = isBest ? M.label + ' 自己ベスト更新！' : M.label + ' の自己ベスト ' + Math.max(best, score).toLocaleString() + '点';
+  $('bCopy').textContent = '結果をコピーして自慢する';
+  lastShare = '【硬い石（意志）' + M.label + '】' + title + '　' + score.toLocaleString() + '点' + (win ? '（' + G.t.toFixed(1) + '秒）' : '') + '\n宿主「' + host + '」';
+  elResult.hidden = false;
+  $('bRetry').focus();
+  $('rRank').textContent = '';
+  $('rTrivia').textContent = G.newTrivia ? '新しい豆知識を ' + G.newTrivia + '個 解放！（タイトルの「豆知識」で読める）' : '';
+  const myMode = MODE;
+  submitScore(myMode, score).then(r => {
+    if(elResult.hidden) return;
+    if(r.state === 'off') $('rRank').textContent = '';
+    else if(r.state === 'error') $('rRank').textContent = 'ランキングに記録できませんでした';
+    else $('rRank').textContent = '社内ランキング ' + MODES[myMode].label + '：' + r.rank + '位' + (r.state === 'saved' ? '（記録更新！）' : '（自己ベスト ' + r.best.toLocaleString() + '点）');
+  });
+}
+
+/* ---------- 豆知識図鑑 ---------- */
+const elTv = $('triviaov');
+function openTrivia(){
+  elTitle.hidden = true; elTv.hidden = false;
+  $('tvMsg').textContent = TRIVIA.length + '個中 ' + triviaGot.size + '個 解放済み。コースを進んだり、敵やアイテムに出会ったりすると増える。';
+  const list = $('tvList'); list.innerHTML = '';
+  let cat = null;
+  TRIVIA.forEach(x => {
+    if(x.cat !== cat){ cat = x.cat; const h = document.createElement('h3'); h.textContent = cat; list.append(h); }
+    const d = document.createElement('div'), b = document.createElement('b');
+    if(triviaGot.has(x.id)){ d.className = 'tvitem'; b.textContent = x.name; d.append(b, document.createTextNode(x.text)); }
+    else { d.className = 'tvitem locked'; b.textContent = '？？？'; d.append(b, document.createTextNode('まだ見つけていない')); }
+    list.append(d);
+  });
+  list.scrollTop = 0;
+  $('tvClose').focus();
+}
+function closeTrivia(){ elTv.hidden = true; elTitle.hidden = false; $('bTrivia').focus(); }
+$('bTrivia').addEventListener('click', openTrivia);
+$('tvClose').addEventListener('click', closeTrivia);
+window.addEventListener('keydown', e => { if(!elTv.hidden && e.key === 'Escape') closeTrivia(); });
+
+/* ---------- 社内ランキング ---------- */
+let DB = null, USER = null, MYID = null, CANWRITE = null, rkMode = 'normal', rkUnsub = null, rkFrom = null, rkSeq = 0;
+(async () => {
+  try{
+    if(!window.claude || typeof window.claude.use !== 'function') return;
+    $('bRankT').hidden = false; $('bRankR').hidden = false;
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    DB = db; USER = user;
+    if(USER){ MYID = await USER.id(); CANWRITE = await USER.can('data.write'); }
+    if(!elRank.hidden) rkSubscribe();
+  }catch(e){}
+})();
+async function submitScore(mode, score){
+  if(!DB || !MYID || CANWRITE === false) return { state: 'off' };
+  try{
+    const ref = DB.doc('scores/' + MYID);
+    const snap = await ref.get();
+    const cur = snap.exists ? Object.assign({}, snap.data()) : {};
+    let state = 'kept', best = Number(cur[mode]) || 0;
+    if(score > best){
+      cur[mode] = score; cur[mode + 'At'] = Date.now();
+      await ref.set(cur);
+      state = 'saved'; best = score;
+    }
+    const higher = await DB.collection('scores').where(mode, '>', best).get();
+    return { state, best, rank: higher.size + 1 };
+  }catch(e){
+    if(e && e.code === 'invalid_argument') CANWRITE = false;
+    return { state: 'error' };
+  }
+}
+const elRank = $('rankov');
+function rkSetMode(m){
+  rkMode = m;
+  elRank.querySelectorAll('.mode').forEach(b => b.setAttribute('aria-checked', b.dataset.rk === m ? 'true' : 'false'));
+  rkSubscribe();
+}
+function rkStatus(){
+  if(!DB) return 'この画面ではランキングを使えません。claude.aiにログインした状態で共有リンクを開くと参加できます。';
+  if(!MYID || CANWRITE === false) return '閲覧のみ。記録するには、このゲームを編集・参加できる共有設定でもらう必要があります。';
+  return 'ゴールしてもゲームオーバーでも、自己ベストが自動で記録されます。';
+}
+function rkSubscribe(){
+  if(rkUnsub){ rkUnsub(); rkUnsub = null; }
+  $('rkList').innerHTML = '';
+  $('rkMsg').textContent = rkStatus();
+  if(!DB) return;
+  const seq = ++rkSeq;
+  try{
+    rkUnsub = DB.collection('scores').where(rkMode, '>', 0).orderBy(rkMode, 'desc').limit(30)
+      .onSnapshot(snap => { if(seq === rkSeq) rkRender(snap.docs, seq); },
+                  () => { if(seq === rkSeq) $('rkMsg').textContent = 'ランキングを読み込めませんでした。'; });
+  }catch(e){ $('rkMsg').textContent = 'ランキングを読み込めませんでした。'; }
+}
+async function rkRender(docs, seq){
+  const ids = docs.map(d => d.id);
+  let ps = {};
+  if(USER && ids.length){ try{ ps = await USER.profiles(ids); }catch(e){ ps = {}; } }
+  if(seq !== rkSeq) return;
+  const list = $('rkList'); list.innerHTML = '';
+  if(!docs.length){ $('rkMsg').textContent = 'まだ誰も記録していません。最初の排石者になろう。'; return; }
+  $('rkMsg').textContent = rkStatus();
+  docs.forEach((d, i) => {
+    const data = d.data() || {}, p = ps[d.id] || {};
+    const li = document.createElement('li'); if(d.id === MYID) li.className = 'me';
+    const no = document.createElement('span'); no.className = 'no'; no.textContent = String(i + 1);
+    const img = document.createElement('img'); img.alt = ''; if(p.avatarUrl) img.src = p.avatarUrl;
+    const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = (p.name || '名無しの結石') + (d.id === MYID ? '（あなた）' : '');
+    const sc = document.createElement('span'); sc.className = 'sc'; sc.textContent = (Number(data[rkMode]) || 0).toLocaleString() + '点';
+    li.append(no, img, nm, sc); list.append(li);
+  });
+}
+function openRank(from){
+  rkFrom = from; from.hidden = true; elRank.hidden = false;
+  rkSetMode(MODE);
+  $('rkClose').focus();
+}
+function closeRank(){
+  if(rkUnsub){ rkUnsub(); rkUnsub = null; }
+  elRank.hidden = true; if(rkFrom) rkFrom.hidden = false;
+}
+elRank.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => rkSetMode(b.dataset.rk)));
+$('rkClose').addEventListener('click', closeRank);
+$('bRankT').addEventListener('click', () => openRank(elTitle));
+$('bRankR').addEventListener('click', () => openRank(elResult));
+window.addEventListener('keydown', e => { if(!elRank.hidden && e.key === 'Escape') closeRank(); });
+
+$('bStart').addEventListener('click', startGame);
+$('bRetry').addEventListener('click', startGame);
+$('bRestart').addEventListener('click', startGame);
+$('bResume').addEventListener('click', resumeGame);
+$('bToTitle').addEventListener('click', toTitle);
+$('bTitle2').addEventListener('click', toTitle);
+$('optSound').addEventListener('change', e => { settings.sound = e.target.checked; store.set('sound', settings.sound); });
+$('optVib').addEventListener('change', e => { settings.vib = e.target.checked; store.set('vib', settings.vib); });
+$('bCopy').addEventListener('click', async () => {
+  const btn = $('bCopy');
+  try{ await navigator.clipboard.writeText(lastShare); btn.textContent = 'コピーしました'; }
+  catch(e){ btn.textContent = 'コピーできませんでした'; }
+});
+
+/* ---------- 遊び方 ---------- */
+const elHow = $('howto');
+const hPages = Array.from(elHow.querySelectorAll('.hpage'));
+let hIdx = 0;
+hPages.forEach(() => { const i = document.createElement('i'); $('hDots').append(i); });
+function sizeHow(){
+  if(elHow.hidden) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  hPages[hIdx].querySelectorAll('canvas.hcv').forEach(c => {
+    const r = c.getBoundingClientRect();
+    c.width = Math.max(1, Math.round(r.width * dpr)); c.height = Math.max(1, Math.round(r.height * dpr));
+  });
+}
+function showHowPage(i){
+  hIdx = clamp(i, 0, hPages.length - 1);
+  hPages.forEach((pg, k) => { pg.hidden = k !== hIdx; });
+  $('hNum').textContent = (hIdx + 1) + ' / ' + hPages.length;
+  Array.from($('hDots').children).forEach((d, k) => d.className = k === hIdx ? 'on' : '');
+  $('hPrev').disabled = hIdx === 0;
+  $('hNext').textContent = hIdx === hPages.length - 1 ? 'はじめる！' : 'つぎへ';
+  elHow.querySelector('.hbody').scrollTop = 0;
+  requestAnimationFrame(sizeHow);
+}
+function openHow(){ ac(); elTitle.hidden = true; elHow.hidden = false; showHowPage(0); $('hNext').focus(); }
+function closeHow(){ elHow.hidden = true; elTitle.hidden = false; $('bHow').focus(); }
+$('bHow').addEventListener('click', openHow);
+$('hClose').addEventListener('click', closeHow);
+$('hPrev').addEventListener('click', () => showHowPage(hIdx - 1));
+$('hNext').addEventListener('click', () => { if(hIdx === hPages.length - 1){ elHow.hidden = true; startGame(); } else showHowPage(hIdx + 1); });
+window.addEventListener('keydown', e => {
+  if(elHow.hidden) return;
+  if(e.key === 'Escape') closeHow();
+  else if(e.key === 'ArrowRight') showHowPage(hIdx + 1);
+  else if(e.key === 'ArrowLeft') showHowPage(hIdx - 1);
+});
+window.addEventListener('resize', sizeHow);
+
+function sceneTube(lw, lh, cxf, w, scroll){
+  ctx.fillStyle = '#5A1B2B'; ctx.fillRect(0, 0, lw, lh);
+  const rows = [];
+  for(let y = -6; y <= lh + 6; y += 5) rows.push([y, cxf(y + scroll)]);
+  const poly = (off) => {
+    ctx.beginPath();
+    rows.forEach((r, i) => { const x = r[1] - w - off; i ? ctx.lineTo(x, r[0]) : ctx.moveTo(x, r[0]); });
+    for(let i = rows.length - 1; i >= 0; i--) ctx.lineTo(rows[i][1] + w + off, rows[i][0]);
+    ctx.closePath();
+  };
+  poly(9); ctx.fillStyle = '#E0786F'; ctx.fill();
+  poly(0); ctx.fillStyle = '#FBE3A0'; ctx.fill();
+  ctx.strokeStyle = '#B5475A'; ctx.lineWidth = 2;
+  for(const sd of [-1, 1]){ ctx.beginPath(); rows.forEach((r, i) => { const x = r[1] + sd * w; i ? ctx.lineTo(x, r[0]) : ctx.moveTo(x, r[0]); }); ctx.stroke(); }
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for(let i = 0; i < 14; i++){
+    const yy = ((i * 37 - scroll * 1.3) % (lh + 20) + lh + 20) % (lh + 20) - 10;
+    const xx = cxf(yy + scroll) + Math.sin(i * 2.3) * (w - 6);
+    ctx.beginPath(); ctx.ellipse(xx, yy, 1.4, 4, 0, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function sceneText(t, x, y, size, color, align, display){
+  ctx.font = (display ? '400 ' : '800 ') + size + 'px ' + (display ? DISPLAY : FONT);
+  ctx.textAlign = align || 'center';
+  ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(43,12,21,0.9)'; ctx.strokeText(t, x, y);
+  ctx.fillStyle = color || '#FFF6E6'; ctx.fillText(t, x, y);
+}
+function sceneCable(x, tipY, lh){
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#1B2E45'; ctx.lineWidth = 11; ctx.beginPath(); ctx.moveTo(x, lh + 20); ctx.lineTo(x, tipY + 20); ctx.stroke();
+  ctx.strokeStyle = '#3E5E84'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(x, lh + 20); ctx.lineTo(x, tipY + 20); ctx.stroke();
+  ctx.lineCap = 'butt';
+}
+const SCENES = {
+  goal(lw, lh, t){
+    ctx.fillStyle = '#4E1826'; ctx.fillRect(0, 0, lw, lh);
+    drawHost(72, 60, 34, 0, MODE);
+    drawStone(226, 60 + Math.sin(t * 3) * 3, 22, Math.sin(t) * 250, 0, MODE);
+    sceneText('宿主のおっさん', 72, 116, 11);
+    sceneText('きみ（結石）', 226, 116, 11);
+    ctx.strokeStyle = 'rgba(255,246,230,0.5)'; ctx.lineWidth = 2; ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(48, 140); ctx.lineTo(252, 140); ctx.stroke(); ctx.setLineDash([]);
+    sceneText('腎臓', 24, 144, 10); sceneText('外尿道口', 276, 144, 10, '#FBE3A0');
+    const px = 52 + ((t * 45) % 196);
+    ctx.fillStyle = '#E9B24C'; ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(px, 140, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  },
+  control(lw, lh, t){
+    const cyc = t % 7, fun = cyc >= 4.5 && cyc < 6.5;
+    const base = Math.floor(t / 7) * (4.5 * 90 + 2 * 32 + 0.5 * 90);
+    const scroll = base + (cyc < 4.5 ? cyc * 90 : cyc < 6.5 ? 405 + (cyc - 4.5) * 32 : 469 + (cyc - 6.5) * 90);
+    const cxf = d => 150 + 34 * Math.sin(d / 80);
+    sceneTube(lw, lh, cxf, 54, scroll);
+    const dodge = fun ? 0 : 30 * Math.sin(t * 1.7);
+    const sx = cxf(64 + scroll) + dodge;
+    drawStone(sx, 64, 13, 30 * 1.7 * Math.cos(t * 1.7) * 6, 0, MODE);
+    if(fun) sceneText('ゆっくり…', sx + 24, 50, 11, '#FFF6E6', 'left');
+    // 指
+    if(!fun){
+      const fx = 110 + dodge * 1.1, fy = 160;
+      ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(fx, fy, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(fx, fy, 16 + (t * 20) % 8, 0, Math.PI * 2); ctx.stroke();
+      sceneText('← ドラッグ →', 110, 190, 11);
+    }
+    // 踏ん張るボタン
+    const bx = 258, by = 162, br = 24, sta = fun ? 1 - (cyc - 4.5) / 2.6 : Math.min(1, 0.25 + (cyc < 4.5 ? cyc / 4.5 : 1));
+    ctx.fillStyle = fun ? 'rgba(46,156,148,0.95)' : 'rgba(43,12,21,0.78)';
+    ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.arc(bx, by, br - 3, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = '#E9B24C'; ctx.beginPath(); ctx.arc(bx, by, br - 3, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * sta); ctx.stroke();
+    ctx.fillStyle = '#FFF6E6'; ctx.font = '800 10px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('踏ん張る', bx, by + 4);
+    if(fun){
+      ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.strokeStyle = '#2B1A1F'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(bx + 8, by + 10, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      sceneText('長押し', bx, by - 32, 11, '#B9F0C8');
+    }
+  },
+  pain(lw, lh, t){
+    ctx.fillStyle = '#4E1826'; ctx.fillRect(0, 0, lw, lh);
+    const raw = (t * 16) % 125, pain = Math.min(100, raw);
+    drawHost(52, 66, 34, pain, MODE);
+    const gx = 104, gy = 52, gw = 180, lvl = pain >= 90 ? 3 : pain >= 60 ? 2 : pain >= 30 ? 1 : 0;
+    ctx.fillStyle = '#FFE9D6'; ctx.font = '800 11px ' + FONT; ctx.textAlign = 'left'; ctx.fillText('宿主の痛み', gx, gy - 8);
+    rr(gx, gy, gw, 14, 7); ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill();
+    if(pain > 1){ rr(gx, gy, Math.max(14, gw * pain / 100), 14, 7); ctx.fillStyle = ['#7ED6A5', '#F2C94C', '#F2994A', '#FF4D6D'][lvl]; ctx.fill(); }
+    ctx.fillStyle = 'rgba(43,12,21,0.7)'; [30, 60, 90].forEach(v => ctx.fillRect(gx + gw * v / 100 - 1, gy, 2, 14));
+    ctx.fillStyle = '#FFE9D6'; ctx.textAlign = 'right'; ctx.fillText(Math.round(pain) + '%', gx + gw, gy - 8);
+    ctx.font = '800 9px ' + FONT; ctx.textAlign = 'center';
+    [[30, '衝撃波↑'], [60, '内視鏡'], [90, '網']].forEach(([v, l]) => { ctx.fillStyle = pain >= v ? '#FFD1DA' : 'rgba(255,233,214,0.5)'; ctx.fillText(l, gx + gw * v / 100, gy + 28); });
+    if(pain >= 100) sceneText('救急搬送！', 194, 118, 20, '#FF4D6D', 'center', true);
+    else if(Math.floor(t * 16 / 12) % 2 === 0 && raw % 12 < 3) sceneText(lvl >= 2 ? 'あかんて…' : 'いてっ', 120, 110, 13, '#FFF6E6', 'left');
+  },
+  shock(lw, lh, t){
+    const cxf = () => 80;
+    sceneTube(lw, lh, cxf, 56, t * 20);
+    const cyc = t % 2.6, p = Math.min(1, cyc / 1.6);
+    const sx = 80 + 42 * sstep((cyc - 0.5) / 0.6);
+    if(cyc < 1.6) drawReticle(80, 60, 28, p, p > 0.72 && Math.floor(cyc * 12) % 2 === 0);
+    else drawBoom(80, 60, 28, Math.min(1, (cyc - 1.6) / 0.5));
+    drawStone(sx, 60, 11, 0, 0, MODE);
+    if(cyc >= 1.6 && cyc < 2.1) sceneText('ドーン', 80, 24, 14, '#9FE0FF', 'center', true);
+  },
+  scope(lw, lh, t){
+    sceneTube(lw, lh, () => 80, 60, t * 20);
+    const cyc = t % 2.8;
+    let phase = 'idle', tipY = 84;
+    if(cyc < 1.0) phase = 'ltell';
+    else if(cyc < 1.3){ phase = 'lunge'; tipY = lerp(84, 22, sstep((cyc - 1.0) / 0.3)); }
+    else if(cyc < 2.1){ phase = 'back'; tipY = lerp(22, 84, sstep((cyc - 1.3) / 0.8)); }
+    const sx = 52 + 52 * sstep((cyc - 0.55) / 0.4) * (cyc < 2.2 ? 1 : 1 - sstep((cyc - 2.2) / 0.5));
+    drawStone(sx, 26, 10, 0, 0, MODE);
+    sceneCable(52, tipY, lh);
+    drawScopeHead(52, tipY, phase, false);
+  },
+  laser(lw, lh, t){
+    sceneTube(lw, lh, () => 80, 60, t * 20);
+    const cyc = t % 2.6, tipY = 80, bx = 46, hw = M.beamW / 2;
+    let phase = 'idle';
+    if(cyc < 1.1) phase = 'tell'; else if(cyc < 1.5) phase = 'fire';
+    if(phase === 'tell'){
+      const a = 0.35 + 0.45 * Math.abs(Math.sin(cyc * 18));
+      ctx.fillStyle = 'rgba(255,45,85,' + (a * 0.28) + ')'; ctx.fillRect(bx - hw, 0, hw * 2, tipY);
+      ctx.strokeStyle = 'rgba(255,45,85,' + a + ')'; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(bx, tipY - 8); ctx.lineTo(bx, 0); ctx.stroke(); ctx.setLineDash([]);
+    } else if(phase === 'fire'){
+      ctx.save(); ctx.shadowColor = '#FF2D55'; ctx.shadowBlur = 14; ctx.strokeStyle = '#FF2D55'; ctx.lineWidth = M.beamW;
+      ctx.beginPath(); ctx.moveTo(bx, tipY - 8); ctx.lineTo(bx, 0); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = Math.max(3, M.beamW * 0.3); ctx.beginPath(); ctx.moveTo(bx, tipY - 8); ctx.lineTo(bx, 0); ctx.stroke();
+    }
+    const sx = 46 + 66 * sstep((cyc - 0.25) / 0.5) * (1 - sstep((cyc - 1.9) / 0.6));
+    drawStone(sx, 24, 10, 0, 0, MODE);
+    sceneCable(bx, tipY, lh);
+    drawScopeHead(bx, tipY, phase, false);
+  },
+  net(lw, lh, t){
+    sceneTube(lw, lh, () => 80, 62, t * 20);
+    const cyc = t % 2.8;
+    const sx = 80 + 50 * sstep((cyc - 0.4) / 0.5) * (1 - sstep((cyc - 2.2) / 0.5));
+    let rad, warn = cyc > 1.1 && cyc < 1.6, y = 58;
+    if(cyc < 1.6) rad = 34 * sstep(cyc / 0.45);
+    else { const ct = cyc - 1.6; rad = Math.max(2, 34 * (1 - sstep(ct / 0.15))); y += ct * 80; }
+    ctx.strokeStyle = '#243B55'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(80, y + rad); ctx.lineTo(80, lh + 10); ctx.stroke();
+    drawNet(80, y, rad, warn, t);
+    drawStone(sx, 58, 10, 0, 0, MODE);
+    if(cyc >= 1.6 && cyc < 2.1) sceneText('確保ォ！', 80, 22, 13, '#FF4D6D', 'center', true);
+  },
+  boss(lw, lh, t){
+    sceneTube(lw, lh, () => 150, 130, t * 15);
+    const cyc = t % 3.2, lanes = [150 - 104, 150 - 52, 150, 150 + 52, 150 + 104], beams = [lanes[0], lanes[2], lanes[3]];
+    let phase = 'idle';
+    if(cyc < 1.2) phase = 'btell'; else if(cyc < 1.6) phase = 'bfire';
+    const by = lh - 34;
+    if(phase !== 'idle') drawBossBeams(beams, phase, cyc, 0, by - 34);
+    const sx = lerp(150, lanes[1], sstep((cyc - 0.25) / 0.45)) * (cyc < 2.4 ? 1 : 0) + (cyc >= 2.4 ? lerp(lanes[1], 150, sstep((cyc - 2.4) / 0.6)) : 0);
+    drawStone(sx, 40, 12, 0, 0, MODE);
+    drawBossCable(150, by, lh);
+    drawBossHead(150, by, 0.8, phase === 'idle' ? 'idle' : phase);
+    if(phase !== 'idle') sceneText(phase === 'btell' ? '一斉照射や！' : 'ドドドド', 238, by - 6, 13, '#FF4D6D', 'center', true);
+  },
+  crystal(lw, lh, t){ sceneTube(lw, lh, () => 50, 40, t * 15); ctx.save(); ctx.translate(50, 45); ctx.scale(1.4, 1.4); drawMobShape({ type: 'crystal', e: 11, ph: 0, face: 1 }, t); ctx.restore(); },
+  bacteria(lw, lh, t){ sceneTube(lw, lh, () => 50, 42, t * 15); const x = 50 + 22 * Math.sin(t * 1.8); ctx.save(); ctx.translate(x, 45); ctx.scale(1.2, 1.2); drawMobShape({ type: 'bacteria', e: 13, ph: 0, face: Math.cos(t * 1.8) >= 0 ? 1 : -1 }, t); ctx.restore(); },
+  wbc(lw, lh, t){
+    sceneTube(lw, lh, () => 50, 42, t * 15);
+    const stx = 50 + 22 * Math.sin(t * 0.9);
+    drawStone(stx, 18, 8, 0, 0, MODE);
+    const x = 50 + 22 * Math.sin(t * 0.9 - 0.9);
+    ctx.save(); ctx.translate(x, 56); ctx.scale(1.15, 1.15); drawMobShape({ type: 'wbc', e: 13, ph: 0, face: Math.sign(stx - x) || 1, alert: true, pop: 0 }, t); ctx.restore();
+  },
+  water(lw, lh, t){ sceneTube(lw, lh, () => 70, 46, t * 40); drawItemIcon('water', 70, 35 + Math.sin(t * 3) * 2); },
+  pill(lw, lh, t){ sceneTube(lw, lh, () => 70, 46, t * 15); drawItemIcon('pill', 70, 35 + Math.sin(t * 3) * 2); },
+  relax(lw, lh, t){ sceneTube(lw, lh, () => 70, 36 + 12 * Math.abs(Math.sin(t * 1.5)), t * 15); drawItemIcon('relax', 70, 35 + Math.sin(t * 3) * 2); },
+  buddy(lw, lh, t){
+    sceneTube(lw, lh, () => 70, 46, t * 15);
+    const k = (t % 2.6) / 2.6, mx = lerp(40, 98, sstep(k / 0.45));
+    const grown = k > 0.45;
+    drawStone(100, 38, grown ? 9 + 5 * sstep((k - 0.45) / 0.2) : 9, 0, 0, MODE);
+    if(!grown) drawItemIcon('buddy', mx, 40);
+    else if(k < 0.8){ ctx.font = '400 13px ' + DISPLAY; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(43,12,21,0.85)'; ctx.strokeText('合体！', 60, 26); ctx.fillStyle = '#E9B24C'; ctx.fillText('合体！', 60, 26); }
+  },
+  endPain(lw, lh, t){ ctx.fillStyle = '#4E1826'; ctx.fillRect(0, 0, lw, lh); drawHost(50, 40, 26, 100, MODE); },
+  endCrush(lw, lh, t){
+    ctx.fillStyle = '#4E1826'; ctx.fillRect(0, 0, lw, lh);
+    const k = (t % 2) / 2;
+    drawStone(50, 36, 14 * (1 - k * 0.5), 0, 1, MODE);
+    ctx.fillStyle = MODE === 'hard' ? '#8A8A99' : '#D9A94A';
+    for(let i = 0; i < 9; i++){ const a = i * 0.7; ctx.beginPath(); ctx.arc(50 + Math.cos(a) * (16 + k * 22), 36 + Math.sin(a) * 8 + k * 30, 2, 0, Math.PI * 2); ctx.fill(); }
+  },
+  endNet(lw, lh, t){
+    ctx.fillStyle = '#4E1826'; ctx.fillRect(0, 0, lw, lh);
+    drawStone(50, 40, 11, 0, 1, MODE);
+    drawNet(50, 40, 20, true, t);
+    ctx.strokeStyle = '#243B55'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(50, 60); ctx.lineTo(50, lh + 5); ctx.stroke();
+  }
+};
+function drawHow(){
+  if(elHow.hidden || !hPages[hIdx]) return;
+  const t = performance.now() / 1000, saved = ctx;
+  hPages[hIdx].querySelectorAll('canvas.hcv').forEach(c => {
+    const g = c.getContext('2d'), lw = +c.dataset.lw, lh = +c.dataset.lh;
+    ctx = g;
+    g.setTransform(c.width / lw, 0, 0, c.height / lh, 0, 0);
+    g.clearRect(0, 0, lw, lh);
+    try{ SCENES[c.dataset.scene](lw, lh, t); }catch(e){}
+  });
+  ctx = saved;
+}
+
+/* ---------- ループ ---------- */
+newGame('demo');
+setMode(MODE);
+let last = performance.now();
+function frame(now){
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  update(dt);
+  draw();
+  drawPreview();
+  drawHow();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
