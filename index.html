@@ -225,7 +225,8 @@ table.rows td:last-child{ text-align:right; font-weight:800; font-variant-numeri
             <canvas class="hcv" data-scene="control" data-lw="300" data-lh="200" style="aspect-ratio:300/200"></canvas>
             <ul>
               <li><b>左右にドラッグ</b>：指を動かした分だけ結石が動く。画面のどこを触ってもOK</li>
-              <li><b>「踏ん張る」を長押し</b>：流れがゆっくりになる。まわりのゲージがなくなるまで使える</li>
+              <li><b>「踏ん張る」を長押し</b>：流れがゆっくりになり、ぶつかったときの痛みが半分になる（ガード）</li>
+              <li>ゲージを使い切ると<b>息切れ</b>して、少しの間まったく動けなくなる。使いすぎ注意</li>
               <li>パソコンは ← → キーで移動、スペースキーで踏ん張る</li>
             </ul>
           </section>
@@ -632,6 +633,7 @@ function spark(x, y, color, n){
 
 function addPain(p, isHit){
   p *= M.painMul;
+  if(G.fun){ p *= 0.5; if(isHit) floatText('ガード', G.stone.x + 26, SY - 8, '#7FE0D6'); }
   G.pain += p; G.totalPain += p;
   if(isHit){
     G.shake = Math.max(G.shake, 0.25);
@@ -644,7 +646,7 @@ function addPain(p, isHit){
 }
 function damage(dr){
   const s = G.stone;
-  s.r -= dr * M.dmgMul;
+  s.r -= dr * M.dmgMul * (G.fun ? 0.6 : 1);
   spark(s.x, SY, '#DCDFE5', 10);
   if(s.r < 6){ s.r = 6; gameOver('crush'); }
 }
@@ -773,10 +775,21 @@ function update(dt){
   G.t += dt;
   if(keys.left) s.tx -= 330 * dt;
   if(keys.right) s.tx += 330 * dt;
+  G.exhaustT = Math.max(0, (G.exhaustT || 0) - dt);
+  if(G.stamina >= 25) G.funReady = true;
   const wantFun = keys.fun || funPointer !== null;
-  G.fun = wantFun && G.stamina > 3;
-  if(G.fun) G.stamina = Math.max(0, G.stamina - 40 * dt);
-  else G.stamina = Math.min(100, G.stamina + 18 * dt);
+  G.fun = wantFun && G.exhaustT <= 0 && G.funReady !== false && G.stamina > 0;
+  if(G.fun){
+    G.stamina = Math.max(0, G.stamina - 40 * dt);
+    if(G.stamina <= 0){
+      G.fun = false; G.funReady = false;
+      G.exhaustT = { easy: 1.0, normal: 1.5, hard: 2.0 }[MODE];
+      floatText('息切れ…！', s.x, SY - 30, '#FFFFFF');
+      sfx.lose(); buzz(80);
+      hint('exhaust', '息切れ！', '踏ん張りすぎると、少しの間まったく動けなくなる');
+    }
+  } else G.stamina = Math.min(100, G.stamina + 18 * dt);
+  if(G.exhaustT > 0) s.tx = s.x;
 
   G.waterT = Math.max(0, G.waterT - dt);
   G.relaxT = Math.max(0, G.relaxT - dt);
@@ -1413,7 +1426,19 @@ function drawWorld(){
     drawStone(s.x, SY - 28, s.r, 0, 0);
     ctx.globalAlpha = 1;
   }
+  if(G.fun){
+    ctx.save(); ctx.strokeStyle = 'rgba(46,156,148,0.85)'; ctx.lineWidth = 3; ctx.setLineDash([6, 5]); ctx.lineDashOffset = -G.t * 30;
+    ctx.beginPath(); ctx.arc(s.x, SY, s.r + 7, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = 'rgba(46,156,148,0.12)'; ctx.fill(); ctx.restore();
+  }
   drawStone(s.x, SY, s.r, s.vx, s.hitFx);
+  if(G.exhaustT > 0){
+    for(let i = 0; i < 3; i++){
+      const a = G.t * 5 + i * Math.PI * 2 / 3;
+      ctx.fillStyle = i === 0 ? '#F5CF6A' : '#FFFFFF'; ctx.strokeStyle = '#B9584A'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(s.x + Math.cos(a) * (s.r + 4), SY - s.r - 6 + Math.sin(a) * 4, 3.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+  }
 
   for(const p of G.parts){
     ctx.globalAlpha = 1 - p.t / p.life; ctx.fillStyle = p.color;
@@ -2006,15 +2031,16 @@ function drawHUD(){
 
   // 踏ん張るボタン
   const fb = FUN_BTN;
-  ctx.fillStyle = G.fun ? 'rgba(46,156,148,0.95)' : 'rgba(255,250,245,0.95)';
+  const exh = G.exhaustT > 0, rec = !exh && G.funReady === false;
+  ctx.fillStyle = G.fun ? 'rgba(46,156,148,0.95)' : exh ? 'rgba(214,200,196,0.95)' : 'rgba(255,250,245,0.95)';
   ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r, 0, Math.PI * 2); ctx.fill();
   ctx.lineWidth = 2; ctx.strokeStyle = '#B9584A'; ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r, 0, Math.PI * 2); ctx.stroke();
   ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(185,88,74,0.15)';
   ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r - 4, 0, Math.PI * 2); ctx.stroke();
-  ctx.strokeStyle = G.stamina < 25 ? '#EE6B78' : '#F0907F';
+  ctx.strokeStyle = G.stamina < 25 || rec ? '#EE6B78' : '#F0907F';
   ctx.beginPath(); ctx.arc(fb.x, fb.y, fb.r - 4, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * G.stamina / 100); ctx.stroke();
-  ctx.fillStyle = G.fun ? '#FFFFFF' : '#7A3B30'; ctx.font = '800 12px ' + FONT; ctx.textAlign = 'center';
-  ctx.fillText('踏ん張る', fb.x, fb.y + 4);
+  ctx.fillStyle = G.fun ? '#FFFFFF' : exh || rec ? '#9A6A60' : '#7A3B30'; ctx.font = '800 12px ' + FONT; ctx.textAlign = 'center';
+  ctx.fillText(exh ? '息切れ' : rec ? '回復中' : '踏ん張る', fb.x, fb.y + 4);
 
   // 終了演出
   if(G.state === 'over'){
